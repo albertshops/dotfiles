@@ -19,6 +19,8 @@ eval "$(pyenv init -)"
 alias ls='ls -G'
 alias ll='ls -lh | sort -r | awk '\''NF==9 { if ($1~/^d/) { printf "\033[0;34m" $9 "\033[0m" "\n" } else { printf $9 "\n" } }'\'' | column -t -s"/"'
 
+alias CD='A=`tmux show-environment PROJECT_ROOT` && cd ${A#*=}'
+
 # fix dvorak tilde position
 hidutil property \
   --matching '{"ProductID":0x343,"VendorID":0x5ac}' \
