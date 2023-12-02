@@ -29,6 +29,9 @@ Plug('folke/tokyonight.nvim')
 -- fuzzy finding
 Plug('nvim-telescope/telescope.nvim')
 
+-- file navigation
+Plug('ThePrimeagen/harpoon')
+
 -- status line
 Plug('nvim-lualine/lualine.nvim')
 
