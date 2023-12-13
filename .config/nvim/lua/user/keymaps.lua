@@ -31,10 +31,7 @@ keymap("n", "<leader>P", "\"0P", opts)
 
 -- telescope
 keymap("n", "<leader>f", ":Telescope find_files<CR>", opts)
-keymap("n", "<leader>g", ":Telescope live_grep<CR>", opts)
-
--- lsp hover
-keymap('n', 'K', ":lua vim.lsp.buf.hover()<CR>", opts)
+keymap("n", "<leader>s", ":Telescope live_grep<CR>", opts)
 
 -- diagnostics
 keymap('n', '<leader>d', ":lua vim.diagnostic.open_float()<CR>", opts)
@@ -48,3 +45,10 @@ keymap('n', '<leader>p', ":cprev<CR>", opts)
 
 -- append "set" to start of word and capitalize first letter
 keymap('n', "<leader>s", "iset<Esc>l~", opts)
+
+-- LSP
+
+-- hover
+keymap('n', 'K', ":lua vim.lsp.buf.hover()<CR>", opts)
+-- go to definition (implementation)
+keymap('n', 'gd', ":lua vim.lsp.buf.implementation()<CR>", opts)
