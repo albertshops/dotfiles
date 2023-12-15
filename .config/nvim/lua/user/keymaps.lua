@@ -43,20 +43,9 @@ keymap('n', 'gb', ":ls<CR>:b<Space>", opts)
 keymap('n', '<leader>n', ":cnext<CR>", opts)
 keymap('n', '<leader>p', ":cprev<CR>", opts)
 
--- append "set" to start of word and capitalize first letter
-keymap('n', "<leader>s", "iset<Esc>l~", opts)
-
 -- LSP
 
 -- hover
 keymap('n', 'K', ":lua vim.lsp.buf.hover()<CR>", opts)
 -- go to definition (implementation)
 keymap('n', 'gd', ":lua vim.lsp.buf.implementation()<CR>", opts)
-
--- harpoon
-keymap("n", "<leader>h", ":lua harpoon.ui:toggle_quick_menu(harpoon:list())<CR>", opts)
-keymap("n", "<leader>a", ":lua harpoon:list():append()<CR>", opts)
-keymap("n", "<C-h>", ":lua harpoon:list():select(1)<CR>", opts)
-keymap("n", "<C-t>", ":lua harpoon:list():select(2)<CR>", opts)
-keymap("n", "<C-n>", ":lua harpoon:list():select(3)<CR>", opts)
-keymap("n", "<C-s>", ":lua harpoon:list():select(4)<CR>", opts)

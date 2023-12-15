@@ -30,7 +30,7 @@ Plug('folke/tokyonight.nvim')
 Plug('nvim-telescope/telescope.nvim')
 
 -- file navigation
-Plug('ThePrimeagen/harpoon')
+Plug('ThePrimeagen/harpoon', { branch = "harpoon2" })
 
 -- status line
 Plug('nvim-lualine/lualine.nvim')
