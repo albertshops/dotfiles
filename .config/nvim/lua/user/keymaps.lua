@@ -6,6 +6,9 @@ keymap("", "<Space>", "<Nop>", opts)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- ctrl-c -> esc
+keymap("i", "<C-c>", "<Esc>", opts)
+
 -- open file explorer
 keymap("n", "<leader>e", ":Ex<CR>", opts)
 
@@ -49,3 +52,5 @@ keymap('n', '<leader>p', ":cprev<CR>", opts)
 keymap('n', 'K', ":lua vim.lsp.buf.hover()<CR>", opts)
 -- go to definition (implementation)
 keymap('n', 'gd', ":lua vim.lsp.buf.implementation()<CR>", opts)
+-- code actions
+keymap('n', '<leader>ca', ":lua vim.lsp.buf.code_action()<CR>", opts)

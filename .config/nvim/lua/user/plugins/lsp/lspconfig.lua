@@ -6,6 +6,7 @@ lspconfig.tsserver.setup({ capabilities = capabilities })
 lspconfig.astro.setup({ capabilities = capabilities })
 lspconfig.tailwindcss.setup({ capabilities = capabilities })
 lspconfig.cssls.setup({ capabilities = capabilities })
+lspconfig.rust_analyzer.setup({ capabilities = capabilities })
 
 lspconfig.lua_ls.setup({
   capabilities = capabilities,
