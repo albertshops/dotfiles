@@ -8,6 +8,7 @@ export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
 precmd () {
   export PROMPT="%F{87}%~%f%F{87} $ %f"
+  export RPROMPT=""
 
   # check if we're just using the default system python version
   local pyenv_root=$(pyenv root)
@@ -17,18 +18,19 @@ precmd () {
   fi
 
   local in_venv=$(pyenv virtualenv-prefix 2>/dev/null)
-
-  # if we're in a venv, get the name and version
   if [[ -n $in_venv ]]; then
+    # if we're in a venv, get the name and version
     local version=${in_venv##*/}
     local name=$(pyenv version-name)
-    export PROMPT="($name/$version) $PROMPT"
-    return
+    prefix="$name:$version"
+  else
+    # otherwise just get the version
+    local version=$(pyenv version-name)
+    prefix="$version"
   fi
 
-  # otherwise just get the version
-  local version=$(pyenv version-name)
-  export PROMPT="($version) $PROMPT"
+#  export PROMPT="%F{220}($prefix) $PROMPT"
+  export RPROMPT="%F{220}$prefix"
 }
 
 
