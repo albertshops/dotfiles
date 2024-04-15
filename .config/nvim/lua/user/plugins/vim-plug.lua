@@ -44,5 +44,8 @@ Plug('lewis6991/gitsigns.nvim')
 -- surround
 Plug('kylechui/nvim-surround')
 
+-- vim be good
+Plug('ThePrimeagen/vim-be-good')
+
 
 vim.call('plug#end')

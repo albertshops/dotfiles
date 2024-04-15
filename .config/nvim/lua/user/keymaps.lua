@@ -50,7 +50,11 @@ keymap('n', '<leader>p', ":cprev<CR>", opts)
 
 -- hover
 keymap('n', 'K', ":lua vim.lsp.buf.hover()<CR>", opts)
--- go to definition (implementation)
-keymap('n', 'gd', ":lua vim.lsp.buf.implementation()<CR>", opts)
+-- go to definition / implementation
+keymap('n', 'gd', ":lua vim.lsp.buf.definition()<CR>", opts)
+keymap('n', 'gi', ":lua vim.lsp.buf.implementation()<CR>", opts)
 -- code actions
 keymap('n', '<leader>ca', ":lua vim.lsp.buf.code_action()<CR>", opts)
+
+-- view current file path
+keymap('n', '<leader>w', ":echo expand('%:p')<CR>", opts)

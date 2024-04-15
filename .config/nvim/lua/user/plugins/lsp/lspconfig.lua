@@ -2,10 +2,11 @@ local lspconfig = require('lspconfig')
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
+lspconfig.jedi_language_server.setup({ capabilities = capabilities })
 lspconfig.tsserver.setup({ capabilities = capabilities })
 lspconfig.astro.setup({ capabilities = capabilities })
 lspconfig.tailwindcss.setup({ capabilities = capabilities })
-lspconfig.cssls.setup({ capabilities = capabilities })
+-- lspconfig.cssls.setup({ capabilities = capabilities })
 lspconfig.rust_analyzer.setup({ capabilities = capabilities })
 lspconfig.gopls.setup({ capabilities = capabilities })
 
@@ -20,18 +21,15 @@ lspconfig.lua_ls.setup({
   }
 })
 
-local function get_python_path()
-  -- Use activated virtualenv.
-  if vim.env.VIRTUAL_ENV then
-    return path.join(vim.env.VIRTUAL_ENV, 'bin', 'python')
-  end
-  return exepath('python3') or exepath('python') or 'python'
-end
-
+--[[
 lspconfig.pyright.setup({
   capabilities = capabilities,
   before_init = function(_, config)
-    config.settings.python.pythonPath = get_python_path()
+    if vim.env.VIRTUAL_ENV then
+      config.settings.python.pythonPath = path.join(vim.env.VIRTUAL_ENV, 'bin', 'python')
+    else
+      config.settings.python.pythonPath = exepath('python3') or exepath('python') or 'python'
+    end
   end,
   settings = {
     python = {
@@ -41,6 +39,7 @@ lspconfig.pyright.setup({
     }
   }
 })
+--]]
 
 
 lspconfig.jsonls.setup({

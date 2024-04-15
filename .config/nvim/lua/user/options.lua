@@ -1,6 +1,6 @@
 -- set number of lines either side of cursor
 -- 999 keeps cursor centered
-vim.opt.scrolloff = 20
+--vim.opt.scrolloff = 20
 
 -- enable mouse support
 vim.opt.mouse = "a"

@@ -48,6 +48,7 @@ alias ls='ls -G'
 alias ll='ls -lh | sort -r | awk '\''NF==9 { if ($1~/^d/) { printf "\033[0;34m" $9 "\033[0m" "\n" } else { printf $9 "\n" } }'\'' | column -t -s"/"'
 
 alias CD='A=`tmux show-environment PROJECT_ROOT` && cd ${A#*=}'
+alias f='fzf'
 
 
 
@@ -61,3 +62,12 @@ hidutil property \
 export ANDROID_HOME=/Users/albertshops/.local/bin
 
 export PATH="$PATH:$HOME/.local/bin"
+
+# pnpm
+export PNPM_HOME="/Users/albertshops/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm endexport PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
