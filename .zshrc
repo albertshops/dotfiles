@@ -10,6 +10,12 @@ precmd () {
   export PROMPT="%F{87}%~%f%F{87} $ %f"
   export RPROMPT=""
 
+  if [ $(pwd) = "$PREV_DIR" ]; then
+    return
+  else
+    PREV_DIR=$(pwd)
+  fi
+
   # check if we're just using the default system python version
   local pyenv_root=$(pyenv root)
   local pyenv_version_file=$(pyenv version-file)
@@ -29,7 +35,6 @@ precmd () {
     prefix="$version"
   fi
 
-#  export PROMPT="%F{220}($prefix) $PROMPT"
   export RPROMPT="%F{220}$prefix"
 }
 
