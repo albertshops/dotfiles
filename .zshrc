@@ -55,6 +55,7 @@ alias ll='ls -lh | sort -r | awk '\''NF==9 { if ($1~/^d/) { printf "\033[0;34m" 
 alias CD='A=`tmux show-environment PROJECT_ROOT` && cd ${A#*=}'
 alias f='fzf'
 
+alias vim=nvim
 
 
 # fix dvorak tilde position
