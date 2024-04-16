@@ -12,10 +12,6 @@ keymap("i", "<C-c>", "<Esc>", opts)
 -- open file explorer
 keymap("n", "<leader>e", ":Ex<CR>", opts)
 
--- focus last editted buffer
-keymap("n", "<Tab>", ":buffer#<CR>", opts)
-
-
 -- stay in indent mode when in visual mode
 keymap("v", "<", "<gv", opts)
 keymap("v", ">", ">gv", opts)
@@ -34,13 +30,13 @@ keymap("n", "<leader>p", "\"0p", opts)
 keymap("n", "<leader>P", "\"0P", opts)
 
 -- telescope
-keymap("n", "<leader>to", ":Telescope<CR>", opts)
-keymap("n", "<leader>tm", ":Telescope marks<CR>", opts)
-keymap("n", "<leader>tb", ":Telescope buffers<CR>", opts)
-keymap("n", "<leader>tr", ":Telescope registers<CR>", opts)
-keymap("n", "<leader>tf", ":Telescope find_files<CR>", opts)
-keymap("n", "<leader>ts", ":Telescope live_grep<CR>", opts)
-keymap("n", "<leader>td", ":Telescope diagnostics<CR>", opts)
+keymap("n", "<Tab>t", ":Telescope<CR>", opts)
+keymap("n", "<Tab>m", ":Telescope marks<CR>", opts)
+keymap("n", "<Tab>b", ":Telescope buffers<CR>", opts)
+keymap("n", "<Tab>r", ":Telescope registers<CR>", opts)
+keymap("n", "<Tab>f", ":Telescope find_files<CR>", opts)
+keymap("n", "<Tab>s", ":Telescope live_grep<CR>", opts)
+keymap("n", "<Tab>w", ":Telescope grep_string<CR>", opts)
 
 -- diagnostics
 keymap('n', '<leader>d', ":lua vim.diagnostic.open_float()<CR>", opts)
@@ -80,9 +76,17 @@ function QuickfixToggle()
   end
 end
 
-keymap('n', '<leader>co', ":lua QuickfixToggle()<CR>", opts)
-keymap('n', '<leader>cn', ":lua QuickfixNext()<CR>", opts)
-keymap('n', '<leader>cp', ":lua QuickfixPrev()<CR>", opts)
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'qf',
+  callback = function()
+    vim.api.nvim_buf_set_keymap(0, 'n', 'j', 'j<CR>zz<C-w>p', opts)
+    vim.api.nvim_buf_set_keymap(0, 'n', 'k', 'k<CR>zz<C-w>p', opts)
+  end
+})
+
+keymap('n', '<Tab>c', ":lua QuickfixToggle()<CR>", opts)
+keymap('n', '<Tab>l', ":lua QuickfixNext()<CR>", opts)
+keymap('n', '<Tab>h', ":lua QuickfixPrev()<CR>", opts)
 
 -- LSP
 
@@ -96,3 +100,17 @@ keymap('n', '<leader>a', ":lua vim.lsp.buf.code_action()<CR>", opts)
 
 -- view current file path
 keymap('n', '<leader>w', ":echo expand('%:p')<CR>", opts)
+
+
+
+local virtual_text = true
+function VirtualTextToggle()
+  virtual_text = not virtual_text
+  vim.diagnostic.config({
+    virtual_text = virtual_text,
+    update_in_insert = true,
+    float = { border = "rounded" }
+  })
+end
+
+vim.api.nvim_set_keymap('n', '<Tab>d', ':lua VirtualTextToggle()<CR>', opts)

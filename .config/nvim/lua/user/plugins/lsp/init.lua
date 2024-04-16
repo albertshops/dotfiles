@@ -10,7 +10,6 @@ null_ls.setup({
     null_ls.builtins.formatting.prettierd,
   },
 })
-
 vim.api.nvim_create_augroup('format_on_save', { clear = true })
 vim.api.nvim_create_autocmd("BufWritePre", {
   group = 'format_on_save',
@@ -38,7 +37,7 @@ vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
 -- DIAGNOSTICS
 vim.diagnostic.config({
   update_in_insert = true,
-  virtual_text = false,
+  virtual_text = true,
   float = { border = "rounded" }
 })
 

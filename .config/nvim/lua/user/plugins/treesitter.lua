@@ -56,5 +56,5 @@ function HighlightFunction()
 end
 
 -- Optionally, map this function to a key
-vim.api.nvim_set_keymap('n', '<leader>hb', ':lua HighlightBlock()<CR>', { noremap = true, silent = false })
-vim.api.nvim_set_keymap('n', '<leader>hf', ':lua HighlightFunction()<CR>', { noremap = true, silent = false })
+vim.api.nvim_set_keymap('v', '<leader>b', ':lua HighlightBlock()<CR>', { noremap = true, silent = false })
+vim.api.nvim_set_keymap('v', '<leader>f', ':lua HighlightFunction()<CR>', { noremap = true, silent = false })
