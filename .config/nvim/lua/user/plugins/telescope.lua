@@ -4,10 +4,18 @@ if not status_ok then
 end
 
 local actions = require "telescope.actions"
+local conf = require('telescope.config').values
 
 telescope.setup {
   defaults = {
-    layout_strategy = 'vertical',
+    vimgrep_arguments = table.insert(conf.vimgrep_arguments, '--fixed-strings'),
+
+    layout_strategy = 'vertical', -- flex
+    layout_config = {
+      mirror = true,
+      prompt_position = "top"
+    },
+    sorting_strategy = "ascending",
 
     prompt_prefix = " ",
     selection_caret = " ",
@@ -79,13 +87,16 @@ telescope.setup {
     },
   },
   pickers = {
-    -- Default configuration for builtin pickers goes here:
-    -- picker_name = {
-    --   picker_config_key = value,
-    --   ...
-    -- }
-    -- Now the picker_config_key will be applied every time you call this
-    -- builtin picker
+    find_files = {
+    },
+    buffers = {
+      sort_lastused = true,
+      ignore_current_buffer = true,
+      filter = function(buf)
+        local filetype = vim.api.nvim_buf_get_option(buf.bufnr, 'filetype')
+        return filetype ~= 'netrw'
+      end,
+    },
   },
   extensions = {
     -- Your extension configuration goes here:
@@ -95,3 +106,5 @@ telescope.setup {
     -- please take a look at the readme of the extension you want to configure
   },
 }
+
+require("telescope").load_extension "file_browser"

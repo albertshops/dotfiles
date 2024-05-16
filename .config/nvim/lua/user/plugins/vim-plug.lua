@@ -28,6 +28,7 @@ Plug('folke/tokyonight.nvim')
 
 -- fuzzy finding
 Plug('nvim-telescope/telescope.nvim')
+Plug('nvim-telescope/telescope-file-browser.nvim')
 
 -- file navigation
 Plug('ThePrimeagen/harpoon', { branch = "harpoon2" })

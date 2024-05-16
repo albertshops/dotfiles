@@ -37,6 +37,8 @@ keymap("n", "<Tab>r", ":Telescope registers<CR>", opts)
 keymap("n", "<Tab>f", ":Telescope find_files<CR>", opts)
 keymap("n", "<Tab>s", ":Telescope live_grep<CR>", opts)
 keymap("n", "<Tab>w", ":Telescope grep_string<CR>", opts)
+keymap("n", "<Tab>d", ":Telescope diagnostics<CR>", opts)
+keymap("n", "<Tab>e", ":Telescope file_browser<CR>", opts)
 
 -- diagnostics
 keymap('n', '<leader>d', ":lua vim.diagnostic.open_float()<CR>", opts)
@@ -113,4 +115,5 @@ function VirtualTextToggle()
   })
 end
 
-vim.api.nvim_set_keymap('n', '<Tab>d', ':lua VirtualTextToggle()<CR>', opts)
+vim.api.nvim_set_keymap('n', '<leader>v', ':lua VirtualTextToggle()<CR>', opts)
+vim.api.nvim_set_keymap('n', '<leader>so', ':luafile ~/.config/nvim/init.lua<CR>', opts)

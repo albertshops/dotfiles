@@ -57,14 +57,6 @@ alias f='fzf'
 
 alias vim=nvim
 
-
-# fix dvorak tilde position
-hidutil property \
-  --matching '{"ProductID":0x343,"VendorID":0x5ac}' \
-  --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000035,"HIDKeyboardModifierMappingDst":0x700000064},{"HIDKeyboardModifierMappingSrc":0x700000064,"HIDKeyboardModifierMappingDst":0x700000035}]}' \
-  >/dev/null
-
-
 export ANDROID_HOME=/Users/albertshops/.local/bin
 
 export PATH="$PATH:$HOME/.local/bin"
