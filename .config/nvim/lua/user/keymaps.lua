@@ -38,7 +38,7 @@ keymap("n", "<Tab>f", ":Telescope find_files<CR>", opts)
 keymap("n", "<Tab>s", ":Telescope live_grep<CR>", opts)
 keymap("n", "<Tab>w", ":Telescope grep_string<CR>", opts)
 keymap("n", "<Tab>d", ":Telescope diagnostics<CR>", opts)
-keymap("n", "<Tab>n", ":Telescope file_browser<CR>", opts)
+keymap("n", "<Tab>n", ":Telescope file_browser path=%:p:h<CR>", opts)
 
 -- diagnostics
 keymap('n', '<leader>d', ":lua vim.diagnostic.open_float()<CR>", opts)
