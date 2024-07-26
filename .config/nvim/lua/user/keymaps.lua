@@ -11,6 +11,7 @@ keymap("i", "<C-c>", "<Esc>", opts)
 
 -- open file explorer
 keymap("n", "<leader>e", ":Ex<CR>", opts)
+keymap("n", "<leader>o", ":Oil<CR>", opts)
 
 -- stay in indent mode when in visual mode
 keymap("v", "<", "<gv", opts)
@@ -102,6 +103,8 @@ keymap('n', '<leader>a', ":lua vim.lsp.buf.code_action()<CR>", opts)
 
 -- view current file path
 keymap('n', '<leader>w', ":echo expand('%:p')<CR>", opts)
+
+keymap('n', '<leader>g', ":LazyGit<CR>", opts)
 
 
 

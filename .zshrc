@@ -54,6 +54,9 @@ alias ll='ls -lh | sort -r | awk '\''NF==9 { if ($1~/^d/) { printf "\033[0;34m" 
 
 alias CD='A=`tmux show-environment PROJECT_ROOT` && cd ${A#*=}'
 alias f='fzf'
+alias sc='sc-im'
+
+alias desaturate=sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g'
 
 alias vim=nvim
 
@@ -67,5 +70,17 @@ case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
-# pnpm endexport PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+# pnpm end
+
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+
+
+# go
+export PATH="$HOME/go/bin:$PATH"
+
+source <(fzf --zsh)
+
+
+bindkey '^[[1;5C' forward-word     # Ctrl+right arrow
+bindkey '^[[1;5D' backward-word    # Ctrl+left arrow

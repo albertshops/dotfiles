@@ -32,6 +32,7 @@ Plug('nvim-telescope/telescope-file-browser.nvim')
 
 -- file navigation
 Plug('ThePrimeagen/harpoon', { branch = "harpoon2" })
+Plug('stevearc/oil.nvim')
 
 -- status line
 Plug('nvim-lualine/lualine.nvim')
@@ -41,12 +42,13 @@ Plug('nvim-treesitter/nvim-treesitter')
 
 -- git
 Plug('lewis6991/gitsigns.nvim')
+Plug 'kdheepak/lazygit.nvim'
 
 -- surround
 Plug('kylechui/nvim-surround')
 
--- vim be good
-Plug('ThePrimeagen/vim-be-good')
+-- misc
+Plug 'stevearc/vim-arduino'
 
 
 vim.call('plug#end')

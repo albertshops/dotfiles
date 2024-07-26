@@ -2,6 +2,13 @@ local lspconfig = require('lspconfig')
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
+lspconfig.arduino_language_server.setup({
+  capabilities = capabilities,
+  cmd = {
+    "arduino-language-server",
+    "-cli-config", "/Users/albertshops/Library/Arduino15/arduino-cli.yaml"
+  }
+})
 lspconfig.jedi_language_server.setup({ capabilities = capabilities })
 lspconfig.tsserver.setup({ capabilities = capabilities })
 lspconfig.astro.setup({ capabilities = capabilities })
