@@ -1,7 +1,20 @@
 #!/bin/bash
 
-ln -s ~/dotfiles/nvim ~/.config/nvim
-ln -s ~/dotfiles/tmux ~/.config/tmux
-ln -s ~/dotfiles/kitty ~/.config/kitty
-ln -s ~/dotfiles/zshrc ~/.zshrc
-ln -s ~/dotfiles/aerospace ~/.aerospace
+create_symlink() {
+    local source=$1
+    local target=$2
+
+    if [ -L "$target" ]; then
+        echo "Symlink already exists: $target"
+    elif [ -e "$target" ]; then
+        echo "Target already exists and is not a symlink: $target"
+    else
+        ln -s "$source" "$target"
+    fi
+}
+
+create_symlink ~/dotfiles/nvim ~/.config/nvim
+create_symlink ~/dotfiles/tmux ~/.config/tmux
+create_symlink ~/dotfiles/kitty ~/.config/kitty
+create_symlink ~/dotfiles/zshrc ~/.zshrc
+create_symlink ~/dotfiles/aerospace.toml ~/.aerospace.toml
