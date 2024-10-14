@@ -1,7 +1,7 @@
 .DS_Store
 *.log
 
-.config/nvim/lua/plugged
+/nvim/lua/plugged
 
-.config/tmux/plugins
-.config/tmux/resurrect
+/tmux/plugins
+/tmux/resurrect
