@@ -149,6 +149,44 @@ alt-shift-j = ['join-with down', 'mode main']
 alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
 
+# floaters
 [[on-window-detected]]
 if.app-name-regex-substring = 'finder'
 run = 'layout floating'
+
+[[on-window-detected]]
+if.window-title-regex-substring = 'huddle'
+run = 'layout floating'
+
+
+# auto workspace
+[[on-window-detected]]
+if.window-title-regex-substring = 'bitwarden'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'kitty'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'firefox'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'chrome'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'slack'
+if.window-title-regex-substring = 'main'
+run = 'move-node-to-workspace 8'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'slack'
+if.window-title-regex-substring = '^((?!hede).)*$'
+run = 'move-node-to-workspace 9'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'whatsapp'
+run = 'move-node-to-workspace 0'
+
