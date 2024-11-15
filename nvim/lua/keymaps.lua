@@ -3,11 +3,17 @@ local map = vim.keymap.set
 map("", "<Space>", "<Nop>")
 
 -- Telescope
-map("n", "<Tab>t", ":Telescope<CR>", { desc = "Telescope" })
+map("n", "<Tab>T", ":Telescope<CR>", { desc = "Telescope" })
+map("n", "<Tab>t", ":Telescope oldfiles<CR>", { desc = "Telescope oldfiles" })
 map("n", "<Tab>b", ":Telescope buffers<CR>", { desc = "Telescope buffers" })
 map("n", "<Tab>f", ":Telescope find_files<CR>", { desc = "Telescope find file" })
 map("n", "<Tab>s", ":Telescope live_grep<CR>", { desc = "Telescope search string" })
 map("n", "<Tab>n", ":Telescope file_browser path=%:p:h<CR>", { desc = "Telescope file browser" })
+map("n", "<Tab>m", ":Telescope marks<CR>", { desc = "Telescope marks" })
+map("n", "<Tab>l", ":Telescope jumplist<CR>", { desc = "Telescope jump list" })
+map("n", "<Tab>v", ":Telescope registers<CR>", { desc = "Telescope registers" })
+map("n", "<Tab>c", ":Telescope quickfix<CR>", { desc = "Telescope quickfix" })
+map("n", "<Tab>r", ":Telescope resume<CR>", { desc = "Telescope resume" })
 
 -- LSP
 map("n", "K", ":lua vim.lsp.buf.hover()<CR>", { desc = "Hover" })
@@ -36,3 +42,5 @@ map("v", ">", ">gv", { desc = "Indent" })
 
 map("v", "J", ":move '>+1<CR>gv=gv", { desc = "Move down" })
 map("v", "K", ":move '<-2<CR>gv=gv", { desc = "Move up" })
+
+map("n", "<C-e>", "<C-i>", { desc = "Jumplist forward" })

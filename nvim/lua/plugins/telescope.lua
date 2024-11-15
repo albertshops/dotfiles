@@ -5,6 +5,7 @@ return {
 	config = function()
 		local actions = require("telescope.actions")
 		local action_state = require("telescope.actions.state")
+		local builtin = require("telescope.builtin")
 		local config = require("telescope.config").values
 
 		local toggle_search_pickers = function(prompt_bufnr)
@@ -15,9 +16,9 @@ return {
 			actions.close(prompt_bufnr)
 
 			if picker_name:match("Find Files") then
-				require("telescope.builtin").live_grep({ default_text = query })
+				builtin.live_grep({ default_text = query })
 			else
-				require("telescope.builtin").find_files({ default_text = query })
+				builtin.find_files({ default_text = query })
 			end
 		end
 
@@ -40,10 +41,11 @@ return {
 					i = {
 						["<C-s>"] = toggle_search_pickers,
 						["<CR>"] = actions.select_default,
-						["<Tab>"] = actions.move_selection_worse,
-						["<S-Tab>"] = actions.move_selection_better,
-						["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
 						["<Esc>"] = "close",
+						["<C-q>"] = function(buf_nr)
+							actions.smart_send_to_qflist(buf_nr)
+							builtin.quickfix()
+						end,
 					},
 				},
 			},
