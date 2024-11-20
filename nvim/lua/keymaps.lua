@@ -13,6 +13,7 @@ map("n", "<Tab>m", ":Telescope marks<CR>", { desc = "Telescope marks" })
 map("n", "<Tab>l", ":Telescope jumplist<CR>", { desc = "Telescope jump list" })
 map("n", "<Tab>v", ":Telescope registers<CR>", { desc = "Telescope registers" })
 map("n", "<Tab>c", ":Telescope quickfix<CR>", { desc = "Telescope quickfix" })
+map("n", "<Tab>d", ":Telescope diagnostics<CR>", { desc = "Telescope diagnostics" })
 map("n", "<Tab>r", ":Telescope resume<CR>", { desc = "Telescope resume" })
 
 -- LSP

@@ -18,3 +18,4 @@ create_symlink ~/dotfiles/tmux ~/.config/tmux
 create_symlink ~/dotfiles/kitty ~/.config/kitty
 create_symlink ~/dotfiles/zshrc ~/.zshrc
 create_symlink ~/dotfiles/aerospace.toml ~/.aerospace.toml
+create_symlink ~/dotfiles/lazygit.yml ~/Library/Application\ Support/lazygit/config.yml
