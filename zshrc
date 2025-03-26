@@ -81,3 +81,4 @@ fi
 
 bindkey '^[[1;5C' forward-word     # Ctrl+right arrow
 bindkey '^[[1;5D' backward-word    # Ctrl+left arrow
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
