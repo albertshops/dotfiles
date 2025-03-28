@@ -11,10 +11,10 @@ map("n", "<Tab>s", ":Telescope live_grep<CR>", { desc = "Telescope search string
 map("n", "<Tab>n", ":Telescope file_browser path=%:p:h<CR>", { desc = "Telescope file browser" })
 map("n", "<Tab>m", ":Telescope marks<CR>", { desc = "Telescope marks" })
 map("n", "<Tab>l", ":Telescope jumplist<CR>", { desc = "Telescope jump list" })
-map("n", "<Tab>v", ":Telescope registers<CR>", { desc = "Telescope registers" })
+map("n", "<Tab>r", ":Telescope registers<CR>", { desc = "Telescope registers" })
 map("n", "<Tab>c", ":Telescope quickfix<CR>", { desc = "Telescope quickfix" })
 map("n", "<Tab>d", ":Telescope diagnostics<CR>", { desc = "Telescope diagnostics" })
-map("n", "<Tab>r", ":Telescope resume<CR>", { desc = "Telescope resume" })
+map("n", "<Tab><space>", ":Telescope resume<CR>", { desc = "Telescope resume" })
 
 -- LSP
 map("n", "K", ":lua vim.lsp.buf.hover()<CR>", { desc = "Hover" })

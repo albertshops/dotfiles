@@ -23,13 +23,19 @@ return {
 					end
 				end,
 				settings = {
+					pyright = {
+						disableOrganizeImports = true,
+					},
 					python = {
 						analysis = {
+							ignore = { "*" },
 							typeCheckingMode = "off",
 						},
 					},
 				},
 			},
+
+			-- ruff = {},
 
 			lua_ls = {
 				settings = {
@@ -85,7 +91,7 @@ return {
 		-- DIAGNOSTICS
 		vim.diagnostic.config({
 			update_in_insert = true,
-			virtual_text = true,
+			virtual_text = false,
 			float = { border = "rounded" },
 		})
 

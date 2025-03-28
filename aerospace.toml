@@ -109,10 +109,10 @@ alt-8 = 'workspace 8'
 alt-9 = 'workspace 9'
 alt-0 = 'workspace 0'
 
-alt-g = 'workspace g'
+alt-g = 'workspace gpt'
 alt-c = 'workspace chrome'
-alt-r = 'workspace r'
-alt-l = 'workspace l'
+alt-r = 'workspace bambu'
+alt-l = 'workspace ableton'
 
 alt-d = 'workspace discord'
 alt-h = 'workspace firefox'
@@ -122,37 +122,37 @@ alt-s = 'workspace slack'
 
 alt-m = 'workspace music'
 alt-w = 'workspace whatsapp'
-alt-v = 'workspace ableton'
+alt-v = 'workspace v'
 alt-z = 'workspace affinity'
 
 
 # See: https://ni:itabobko.github.io/AeroSpace/commands#move-node-to-workspace
-alt-shift-1 = 'move-node-to-workspace 1'
-alt-shift-2 = 'move-node-to-workspace 2'
-alt-shift-3 = 'move-node-to-workspace 3'
-alt-shift-4 = 'move-node-to-workspace 4'
-alt-shift-5 = 'move-node-to-workspace 5'
-alt-shift-6 = 'move-node-to-workspace 6'
-alt-shift-7 = 'move-node-to-workspace 7'
-alt-shift-8 = 'move-node-to-workspace 8'
-alt-shift-9 = 'move-node-to-workspace 9'
-alt-shift-0 = 'move-node-to-workspace 0'
+alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
+alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
+alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
+alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
+alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5']
+alt-shift-6 = ['move-node-to-workspace 6', 'workspace 6']
+alt-shift-7 = ['move-node-to-workspace 7', 'workspace 7']
+alt-shift-8 = ['move-node-to-workspace 8', 'workspace 8']
+alt-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
+alt-shift-0 = ['move-node-to-workspace 0', 'workspace 0']
 
-alt-shift-g = 'move-node-to-workspace g'
-alt-shift-c = 'move-node-to-workspace chrome'
-alt-shift-r = 'move-node-to-workspace r'
-alt-shift-l = 'move-node-to-workspace l'
+alt-shift-g = ['move-node-to-workspace gpt', 'workspace gpt']
+alt-shift-c = ['move-node-to-workspace chrome', 'workspace chrome']
+alt-shift-r = ['move-node-to-workspace bambu', 'workspace bambu']
+alt-shift-l = ['move-node-to-workspace ableton', 'workspace ableton']
 
-alt-shift-d = 'move-node-to-workspace discord'
-alt-shift-h = 'move-node-to-workspace firefox'
-alt-shift-t = 'move-node-to-workspace terminal'
-alt-shift-n = 'move-node-to-workspace huddle'
-alt-shift-s = 'move-node-to-workspace slack'
+alt-shift-d = ['move-node-to-workspace discord', 'workspace discord']
+alt-shift-h = ['move-node-to-workspace firefox', 'workspace firefox']
+alt-shift-t = ['move-node-to-workspace terminal', 'workspace terminal']
+alt-shift-n = ['move-node-to-workspace huddle', 'workspace huddle']
+alt-shift-s = ['move-node-to-workspace slack', 'workspace slack']
 
-alt-shift-m = 'move-node-to-workspace music'
-alt-shift-w = 'move-node-to-workspace whatsapp'
-alt-shift-v = 'move-node-to-workspace ableton'
-alt-shift-z = 'move-node-to-workspace affinity'
+alt-shift-m = ['move-node-to-workspace music', 'workspace music']
+alt-shift-w = ['move-node-to-workspace whatsapp', 'workspace whatsapp']
+alt-shift-v = ['move-node-to-workspace v', 'workspace v']
+alt-shift-z = ['move-node-to-workspace affinity', 'workspace affinity']
 
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
@@ -187,6 +187,9 @@ run = 'layout floating'
 [[on-window-detected]]
 if.app-name-regex-substring = 'kitty'
 run = 'move-node-to-workspace terminal'
+[[on-window-detected]]
+if.app-name-regex-substring = 'gpt'
+run = 'move-node-to-workspace gpt'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'firefox'
@@ -225,4 +228,8 @@ run = 'move-node-to-workspace ableton'
 [[on-window-detected]]
 if.app-name-regex-substring = 'affinity'
 run = 'move-node-to-workspace affinity'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'bambu'
+run = 'move-node-to-workspace bambu'
 

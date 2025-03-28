@@ -1,0 +1,6 @@
+window-decoration = false
+theme = 3024 Night
+theme = FrontEndDelight
+font-size = 12
+window-inherit-font-size = false
+keybind = ctrl+f=ignore
