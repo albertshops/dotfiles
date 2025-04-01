@@ -114,7 +114,7 @@ alt-c = 'workspace chrome'
 alt-r = 'workspace bambu'
 alt-l = 'workspace ableton'
 
-alt-d = 'workspace discord'
+alt-d = 'workspace db'
 alt-h = 'workspace firefox'
 alt-t = 'workspace terminal'
 alt-n = 'workspace huddle'
@@ -143,7 +143,7 @@ alt-shift-c = ['move-node-to-workspace chrome', 'workspace chrome']
 alt-shift-r = ['move-node-to-workspace bambu', 'workspace bambu']
 alt-shift-l = ['move-node-to-workspace ableton', 'workspace ableton']
 
-alt-shift-d = ['move-node-to-workspace discord', 'workspace discord']
+alt-shift-d = ['move-node-to-workspace db', 'workspace db']
 alt-shift-h = ['move-node-to-workspace firefox', 'workspace firefox']
 alt-shift-t = ['move-node-to-workspace terminal', 'workspace terminal']
 alt-shift-n = ['move-node-to-workspace huddle', 'workspace huddle']
@@ -218,8 +218,8 @@ if.app-name-regex-substring = 'youtube music'
 run = 'move-node-to-workspace music'
 
 [[on-window-detected]]
-if.app-name-regex-substring = 'discord'
-run = 'move-node-to-workspace discord'
+if.app-name-regex-substring = 'dbeaver'
+run = 'move-node-to-workspace db'
 
 [[on-window-detected]]
 if.app-id = 'com.ableton.live'
