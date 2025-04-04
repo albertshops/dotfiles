@@ -32,6 +32,8 @@ end, { desc = "Toggle comment" })
 -- misc
 map("n", "<leader>g", ":LazyGit<CR>", { desc = "LazyGit" })
 map("n", "<leader>o", ":Oil<CR>", { desc = "Oil" })
+map("n", "<leader>t", ":below split term://zsh<CR>a", { desc = "terminal" })
+map("t", "<Esc>", "<C-\\><C-n>", { desc = "Terminal - normal mode" })
 
 map("n", "<leader>y", '"+y', { desc = "Yank to clipboard" })
 map("v", "<leader>y", '"+y', { desc = "Yank to clipboard" })
