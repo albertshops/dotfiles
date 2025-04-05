@@ -34,7 +34,6 @@ end, { desc = "Toggle comment" })
 -- misc
 map("n", "<leader>g", ":LazyGit<CR>", { desc = "LazyGit" })
 map("n", "<leader>o", ":Oil<CR>", { desc = "Oil" })
-map("n", "<leader>t", ":below split term://zsh<CR>a", { desc = "terminal" })
 map("t", "<Esc>", "<C-\\><C-n>", { desc = "Terminal - normal mode" })
 
 map("n", "<leader>y", '"+y', { desc = "Yank to clipboard" })
@@ -47,3 +46,17 @@ map("v", "J", ":move '>+1<CR>gv=gv", { desc = "Move down" })
 map("v", "K", ":move '<-2<CR>gv=gv", { desc = "Move up" })
 
 map("n", "<C-e>", "<C-i>", { desc = "Jumplist forward" })
+
+-- open terminal
+map("n", "<leader>t", function()
+	local cwd = vim.fn.getcwd()
+	local text_win = vim.api.nvim_get_current_win()
+
+	vim.cmd("lcd %:p:h")
+	vim.cmd("below split | terminal zsh")
+	local term_win = vim.api.nvim_get_current_win()
+	vim.api.nvim_set_current_win(text_win)
+	vim.cmd("lcd " .. cwd)
+	vim.api.nvim_set_current_win(term_win)
+	vim.cmd("startinsert")
+end, { desc = "Open terminal" })
