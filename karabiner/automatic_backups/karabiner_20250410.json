@@ -423,6 +423,7 @@
                     },
                     {
                         "description": "disable backspace",
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "from": { "key_code": "delete_or_backspace" },
