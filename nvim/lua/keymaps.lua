@@ -18,7 +18,12 @@ map("n", "<Tab><space>", ":Telescope resume<CR>", { desc = "Telescope resume" })
 map("n", "K", ":lua vim.lsp.buf.hover()<CR>", { desc = "Hover" })
 map("n", "<leader>d", ":lua vim.diagnostic.open_float()<CR>", { desc = "Open diagnostics float" })
 map("n", "gd", ":lua vim.lsp.buf.definition()<CR>", { desc = "Go to definition" })
-map("n", "<leader>a", ":lua vim.lsp.buf.code_action()<CR>", { desc = "Code action" })
+
+-- code actions
+map("n", "<leader>i", ":lua vim.lsp.buf.code_action()<CR>", { desc = "Code action" })
+
+-- toggle chat
+map("n", "<leader>a", ":AvanteToggle<CR>", { desc = "Toggle chat" })
 
 -- toggle comments
 map("n", "<leader>c", ":lua require('Comment.api').toggle.linewise.current()<CR>", { desc = "Toggle comment" })
@@ -32,20 +37,27 @@ end, { desc = "Toggle comment" })
 -- misc
 map("n", "<leader>g", ":LazyGit<CR>", { desc = "LazyGit" })
 map("n", "<leader>o", ":Oil<CR>", { desc = "Oil" })
+
+-- terminal
 map("n", "<leader>t", ":below split term://zsh<CR>a", { desc = "terminal" })
 map("t", "<Esc>", "<C-\\><C-n>", { desc = "Terminal - normal mode" })
 
+-- copy to clipboard
 map("n", "<leader>y", '"+y', { desc = "Yank to clipboard" })
 map("v", "<leader>y", '"+y', { desc = "Yank to clipboard" })
 
+-- indent
 map("v", "<", "<gv", { desc = "Indent" })
 map("v", ">", ">gv", { desc = "Indent" })
 
+-- move
 map("v", "J", ":move '>+1<CR>gv=gv", { desc = "Move down" })
 map("v", "K", ":move '<-2<CR>gv=gv", { desc = "Move up" })
 
+-- jumplist
 map("n", "<C-e>", "<C-i>", { desc = "Jumplist forward" })
 
+-- supermaven
 map("i", "<C-t>", function()
   local api = require("supermaven-nvim.api")
   api.toggle()
@@ -65,3 +77,13 @@ map("n", "<C-t>", function()
   api.toggle()
   print("Supermaven: " .. tostring(api.is_running()))
 end, { desc = "Supermaven Toggle" })
+
+-- diffview file history
+map("n", "<leader>h", function()
+  local view = require("diffview.lib").get_current_view()
+  if view then
+    vim.cmd("DiffviewClose")
+  else
+    vim.cmd("DiffviewFileHistory %")
+  end
+end, { desc = "Toggle Diffview" })
