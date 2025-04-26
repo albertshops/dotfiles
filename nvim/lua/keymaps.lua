@@ -121,3 +121,13 @@ vim.keymap.set("v", "<leader>s", function()
 	vim.api.nvim_win_set_cursor(0, { start_line + 1, col_after_tag })
 	vim.cmd("startinsert")
 end, { desc = "Wrap trimmed selection with XML tag and format" })
+
+-- smooth scroll
+local commands = { "<C-U>", "<C-D>", "{", "}" }
+local cinnamon = require("cinnamon")
+cinnamon.setup()
+for _, command in ipairs(commands) do
+	map("n", command, function()
+		cinnamon.scroll(command)
+	end)
+end
