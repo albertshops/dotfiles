@@ -4,24 +4,6 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "⇪+r",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "r",
-                                    "modifiers": { "mandatory": ["left_command", "left_option", "left_control", "left_shift"] }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "close_bracket",
-                                        "modifiers": ["shift"]
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "⇪+i",
                         "manipulators": [
                             {

@@ -4,24 +4,6 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "⇪+r",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "r",
-                                    "modifiers": { "mandatory": ["left_command", "left_option", "left_control", "left_shift"] }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "close_bracket",
-                                        "modifiers": ["shift"]
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "⇪+i",
                         "manipulators": [
                             {
@@ -83,12 +65,7 @@
                                     "key_code": "l",
                                     "modifiers": { "mandatory": ["left_command", "left_option", "left_control", "left_shift"] }
                                 },
-                                "to": [
-                                    {
-                                        "key_code": "z",
-                                        "modifiers": ["shift"]
-                                    }
-                                ],
+                                "to": [{ "key_code": "z" }],
                                 "type": "basic"
                             }
                         ]
@@ -101,7 +78,12 @@
                                     "key_code": "semicolon",
                                     "modifiers": { "mandatory": ["left_command", "left_option", "left_control", "left_shift"] }
                                 },
-                                "to": [{ "key_code": "z" }],
+                                "to": [
+                                    {
+                                        "key_code": "z",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
