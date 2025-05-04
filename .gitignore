@@ -1,7 +1,10 @@
 .DS_Store
 *.log
 
-/nvim/lua/plugged
+nvim/lua/plugged
+nvim/lazy-lock.json
 
-/tmux/plugins
-/tmux/resurrect
+tmux/plugins
+tmux/resurrect
+
+karabiner/automatic_backups

@@ -343,7 +343,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "1",
+                                        "key_code": "vk_none",
                                         "modifiers": ["shift"]
                                     }
                                 ],
