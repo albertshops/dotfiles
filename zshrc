@@ -1,49 +1,6 @@
 export PROMPT="%F{87}%~%f%F{87} $ %f"
 export RPROMPT=""
 
-# pyenv
-if which pyenv >/dev/null 2>&1; then
-  export PYENV_ROOT="$HOME/.pyenv"
-  command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init --path)"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-  export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-
-  precmd () {
-    export PROMPT="%F{87}%~%f%F{87} $ %f"
-    export RPROMPT=""
-
-    if [ $(pwd) = "$PREV_DIR" ]; then
-      return
-    else
-      PREV_DIR=$(pwd)
-    fi
-
-    # check if we're just using the default system python version
-    local pyenv_root=$(pyenv root)
-    local pyenv_version_file=$(pyenv version-file)
-    if [[ $pyenv_version_file == $pyenv_root* ]]; then
-      return
-    fi
-
-    local in_venv=$(pyenv virtualenv-prefix 2>/dev/null)
-    if [[ -n $in_venv ]]; then
-      # if we're in a venv, get the name and version
-      local version=${in_venv##*/}
-      local name=$(pyenv version-name)
-      prefix="$name:$version"
-    else
-      # otherwise just get the version
-      local version=$(pyenv version-name)
-      prefix="$version"
-    fi
-
-    export RPROMPT="%F{109}$prefix"
-  }
-fi
-
-
 # nvm
 if which nvm >/dev/null 2>&1; then
   export NVM_DIR="$HOME/.nvm"
