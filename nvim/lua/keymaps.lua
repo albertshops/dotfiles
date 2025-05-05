@@ -150,3 +150,90 @@ for _, command in ipairs(commands) do
     cinnamon.scroll(command)
   end)
 end
+
+
+
+map("i", "§",
+  function()
+    -- Get text of the current line
+    local line = vim.api.nvim_get_current_line()
+    -- Get cursor position
+    local cursor_pos = vim.api.nvim_win_get_cursor(0)
+    local col = cursor_pos[2]
+
+    -- If we're at the beginning of the line, there's nothing to check
+    if col == 0 then
+      return ""
+    end
+
+    -- Map of opening brackets to their closing counterparts
+    local brackets = {
+      ['('] = ')',
+      ['{'] = '}',
+      ['['] = ']'
+    }
+
+    -- Get the character before the cursor
+    local char_before = string.sub(line, col, col)
+
+    -- Check for brackets first
+    if brackets[char_before] then
+      return brackets[char_before] .. "<Left>"
+    end
+
+    -- Check for HTML tag
+    if char_before == '>' then
+      -- Look backward to find the opening '<'
+      local tag_content = ""
+      local i = col - 1
+
+      -- Find the potential tag content
+      while i > 0 do
+        local c = line:sub(i, i)
+        if c == '<' then
+          tag_content = line:sub(i, col)
+          break
+        elseif c == '>' then
+          -- Found another closing bracket before finding opening, not a valid tag
+          break
+        end
+        i = i - 1
+      end
+
+      -- If we found what looks like a tag
+      if tag_content ~= "" then
+        -- Extract the tag name
+        local tag_name = tag_content:match("^<([%w%-]+)")
+
+        -- If it's a valid tag and not a self-closing tag
+        if tag_name and not tag_content:match("/[%s]*>$") and not tag_content:match("^<%?") then
+          -- Check if it's not a self-closing tag like <img>, <br>, <hr>, etc.
+          local self_closing_tags = {
+            img = true,
+            br = true,
+            hr = true,
+            meta = true,
+            link = true,
+            input = true,
+            area = true,
+            base = true,
+            col = true,
+            embed = true,
+            keygen = true,
+            param = true,
+            source = true,
+            track = true,
+            wbr = true
+          }
+
+          if not self_closing_tags[tag_name:lower()] then
+            return "</" .. tag_name .. ">" .. string.rep("<Left>", string.len(tag_name) + 3)
+          end
+        end
+      end
+    end
+
+    -- If no match detected, return empty string
+    return ""
+  end
+  , { expr = true, desc = "Insert matching closing bracket/tag" })
