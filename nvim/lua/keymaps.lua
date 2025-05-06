@@ -153,7 +153,7 @@ end
 
 
 
-map("i", "§",
+map("i", "<C-n>",
   function()
     -- Get text of the current line
     local line = vim.api.nvim_get_current_line()
