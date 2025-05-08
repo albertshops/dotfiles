@@ -279,12 +279,7 @@
                                     "key_code": "j",
                                     "modifiers": { "mandatory": ["left_command", "left_option", "left_control", "left_shift"] }
                                 },
-                                "to": [
-                                    {
-                                        "key_code": "3",
-                                        "modifiers": ["shift"]
-                                    }
-                                ],
+                                "to": [{ "key_code": "delete_or_backspace" }],
                                 "type": "basic"
                             }
                         ]
@@ -454,7 +449,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "vk_none",
+                                        "key_code": "3",
                                         "modifiers": ["shift"]
                                     }
                                 ],
@@ -501,7 +496,7 @@
                                     "key_code": "spacebar",
                                     "modifiers": { "mandatory": ["left_command", "left_option", "left_control", "left_shift"] }
                                 },
-                                "to": [{ "key_code": "delete_or_backspace" }],
+                                "to": [{ "key_code": "spacebar" }],
                                 "type": "basic"
                             }
                         ]

@@ -188,7 +188,7 @@ run = 'layout floating'
 if.app-name-regex-substring = 'kitty'
 run = 'move-node-to-workspace terminal'
 [[on-window-detected]]
-if.app-name-regex-substring = 'gpt'
+if.app-name-regex-substring = 'msty'
 run = 'move-node-to-workspace gpt'
 
 [[on-window-detected]]
