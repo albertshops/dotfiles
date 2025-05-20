@@ -18,3 +18,18 @@ autocmd("VimEnter", {
 		end
 	end,
 })
+
+autocmd("TermOpen", {
+	group = augroup("term-open", { clear = true }),
+	callback = function()
+		vim.opt.number = false
+		vim.opt.relativenumber = false
+	end,
+})
+
+autocmd({ "FileType" }, {
+	pattern = { "python" },
+	callback = function()
+		vim.b.disable_autoformat = true
+	end,
+})

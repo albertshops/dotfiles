@@ -292,12 +292,7 @@
                                     "key_code": "k",
                                     "modifiers": { "mandatory": ["left_command", "left_option", "left_control", "left_shift"] }
                                 },
-                                "to": [
-                                    {
-                                        "key_code": "non_us_backslash",
-                                        "modifiers": ["shift"]
-                                    }
-                                ],
+                                "to": [{ "key_code": "tab" }],
                                 "type": "basic"
                             }
                         ]
@@ -323,7 +318,12 @@
                                     "key_code": "semicolon",
                                     "modifiers": { "mandatory": ["left_command", "left_option", "left_control", "left_shift"] }
                                 },
-                                "to": [{ "key_code": "z" }],
+                                "to": [
+                                    {
+                                        "key_code": "non_us_backslash",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]

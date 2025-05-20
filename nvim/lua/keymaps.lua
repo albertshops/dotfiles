@@ -62,7 +62,6 @@ map("v", "K", ":move '<-2<CR>gv=gv", { desc = "Move up" })
 -- jumplist
 map("n", "<C-e>", "<C-i>", { desc = "Jumplist forward" })
 
--- supermaven
 -- open terminal
 map("n", "<leader>t", function()
 	local cwd = vim.fn.getcwd()
@@ -88,7 +87,6 @@ map("i", "<C-t>", function()
 	})
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-d>", true, false, true), "i", false)
 end, { desc = "Supermaven Toggle" })
-
 map("n", "<C-t>", function()
 	local api = require("supermaven-nvim.api")
 	api.toggle()
@@ -104,6 +102,7 @@ map("n", "<leader>h", function()
 		vim.cmd("DiffviewFileHistory %")
 	end
 end, { desc = "Toggle Diffview" })
+
 -- surround
 vim.keymap.set("v", "<leader>s", function()
 	local tag = vim.fn.input("Enter tag: ")
@@ -142,7 +141,7 @@ vim.keymap.set("v", "<leader>s", function()
 end, { desc = "Wrap trimmed selection with XML tag and format" })
 
 -- smooth scroll
-local commands = { "<C-U>", "<C-D>", "{", "}" }
+local commands = { "<C-U>", "<C-D>", "{", "}", "j", "k" }
 local cinnamon = require("cinnamon")
 cinnamon.setup()
 for _, command in ipairs(commands) do
