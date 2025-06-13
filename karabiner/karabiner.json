@@ -10,6 +10,14 @@
                                 "from": { "key_code": "quote" },
                                 "to": [{ "key_code": "right_control" }],
                                 "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "quote",
+                                    "modifiers": { "mandatory": ["right_option"] }
+                                },
+                                "to": [{ "key_code": "right_control" }],
+                                "type": "basic"
                             }
                         ]
                     },
@@ -18,6 +26,14 @@
                         "manipulators": [
                             {
                                 "from": { "key_code": "caps_lock" },
+                                "to": [{ "key_code": "right_control" }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "caps_lock",
+                                    "modifiers": { "mandatory": ["right_option"] }
+                                },
                                 "to": [{ "key_code": "right_control" }],
                                 "type": "basic"
                             }
@@ -377,7 +393,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "vk_none",
+                                        "key_code": "1",
                                         "modifiers": []
                                     }
                                 ],
@@ -390,7 +406,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "vk_none",
+                                        "key_code": "0",
                                         "modifiers": []
                                     }
                                 ],
