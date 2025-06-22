@@ -4,36 +4,51 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "quote → right_control",
-                        "manipulators": [
-                            {
-                                "from": { "key_code": "quote" },
-                                "to": [{ "key_code": "right_control" }],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "quote",
-                                    "modifiers": { "mandatory": ["right_option"] }
-                                },
-                                "to": [{ "key_code": "right_control" }],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "caps_lock → right_control",
+                        "description": "brackets",
                         "manipulators": [
                             {
                                 "from": { "key_code": "caps_lock" },
-                                "to": [{ "key_code": "right_control" }],
+                                "to": [
+                                    {
+                                        "key_code": "9",
+                                        "modifiers": ["left_shift"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": { "key_code": "quote" },
+                                "to": [
+                                    {
+                                        "key_code": "0",
+                                        "modifiers": ["left_shift"]
+                                    }
+                                ],
                                 "type": "basic"
                             },
                             {
                                 "from": {
                                     "key_code": "caps_lock",
-                                    "modifiers": { "mandatory": ["right_option"] }
+                                    "modifiers": { "mandatory": ["shift"] }
                                 },
+                                "to": [{ "key_code": "hyphen" }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "quote",
+                                    "modifiers": { "mandatory": ["shift"] }
+                                },
+                                "to": [{ "key_code": "equal_sign" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "left_command → right_control",
+                        "manipulators": [
+                            {
+                                "from": { "key_code": "left_command" },
                                 "to": [{ "key_code": "right_control" }],
                                 "type": "basic"
                             }
@@ -164,6 +179,19 @@
                             },
                             {
                                 "from": {
+                                    "key_code": "caps_lock",
+                                    "modifiers": { "mandatory": ["right_control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "hyphen",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
                                     "key_code": "a",
                                     "modifiers": { "mandatory": ["right_control"] }
                                 },
@@ -262,6 +290,19 @@
                                 "to": [
                                     {
                                         "key_code": "non_us_backslash",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "quote",
+                                    "modifiers": { "mandatory": ["right_control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "equal_sign",
                                         "modifiers": ["shift"]
                                     }
                                 ],
@@ -374,6 +415,45 @@
                         ]
                     },
                     {
+                        "description": "quote → right_control",
+                        "enabled": false,
+                        "manipulators": [
+                            {
+                                "from": { "key_code": "quote" },
+                                "to": [{ "key_code": "right_control" }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "quote",
+                                    "modifiers": { "mandatory": ["right_option"] }
+                                },
+                                "to": [{ "key_code": "right_control" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "caps_lock → right_control",
+                        "enabled": false,
+                        "manipulators": [
+                            {
+                                "from": { "key_code": "caps_lock" },
+                                "to": [{ "key_code": "right_control" }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "caps_lock",
+                                    "modifiers": { "mandatory": ["right_option"] }
+                                },
+                                "to": [{ "key_code": "right_control" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "right_command → right_option",
@@ -385,6 +465,7 @@
                     },
                     {
                         "description": "right_option layer (brackets/numbers)",
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "from": {
@@ -600,6 +681,7 @@
                     },
                     {
                         "description": "shift+qwe",
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "from": {
@@ -644,6 +726,7 @@
                     },
                     {
                         "description": "Invert colours with fn+I",
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "from": {
