@@ -411,6 +411,19 @@
                                     }
                                 ],
                                 "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "slash",
+                                    "modifiers": { "mandatory": ["right_control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "non_us_backslash",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
+                                "type": "basic"
                             }
                         ]
                     },
@@ -763,9 +776,23 @@
                     "to": [{ "key_code": "caps_lock" }]
                 }
             ],
-            "name": "Default profile",
+            "name": "hyper",
             "selected": true,
+            "simple_modifications": [
+                {
+                    "from": { "key_code": "grave_accent_and_tilde" },
+                    "to": [{ "key_code": "non_us_backslash" }]
+                },
+                {
+                    "from": { "key_code": "non_us_backslash" },
+                    "to": [{ "key_code": "grave_accent_and_tilde" }]
+                }
+            ],
             "virtual_hid_keyboard": { "keyboard_type_v2": "iso" }
+        },
+        {
+            "name": "nothing",
+            "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
         }
     ]
 }
