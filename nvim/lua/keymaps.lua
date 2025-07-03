@@ -6,7 +6,8 @@ map("", "<Space>", "<Nop>")
 map("n", "<Tab>t", ":Telescope<CR>", { desc = "Telescope" })
 map("n", "<Tab>o", ":Telescope oldfiles<CR>", { desc = "Telescope oldfiles" })
 map("n", "<Tab>b", ":Telescope buffers<CR>", { desc = "Telescope buffers" })
-map("n", "<Tab>f", ":Telescope find_files<CR>", { desc = "Telescope find file" })
+map("n", "<Tab>/", ":Telescope current_buffer_fuzzy_find<CR>", { desc = "Telescope find" })
+map("n", "<Tab>f", ":Telescope find_files<CR>", { desc = "Telescope search files" })
 map("n", "<Tab>s", ":Telescope live_grep<CR>", { desc = "Telescope search string" })
 map("n", "<Tab>m", ":Telescope marks<CR>", { desc = "Telescope marks" })
 map("n", "<Tab>r", ":Telescope registers<CR>", { desc = "Telescope registers" })
@@ -90,7 +91,11 @@ end, { desc = "Supermaven Toggle" })
 map("n", "<C-t>", function()
 	local api = require("supermaven-nvim.api")
 	api.toggle()
-	print("Supermaven: " .. tostring(api.is_running()))
+	require("notify")("Supermaven: " .. tostring(api.is_running()), "info", {
+		render = "minimal",
+		timeout = 100,
+		stages = "fade",
+	})
 end, { desc = "Supermaven Toggle" })
 
 -- diffview file history

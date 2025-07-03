@@ -92,6 +92,7 @@ return {
 				ghost_text = false,
 				native_menu = false,
 			},
+			preselect = cmp.PreselectMode.None,
 		})
 	end,
 }
