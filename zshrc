@@ -15,6 +15,7 @@ alias CD='A=`tmux show-environment PROJECT_ROOT` && cd ${A#*=}'
 alias desaturate=sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g'
 
 alias ls='ls -G'
+alias d='ls -lah'
 alias vim=nvim
 alias venv='source .venv/bin/activate'
 

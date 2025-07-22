@@ -15,6 +15,12 @@ map("n", "<Tab>c", ":Telescope quickfix<CR>", { desc = "Telescope quickfix" })
 map("n", "<Tab>d", ":Telescope diagnostics<CR>", { desc = "Telescope diagnostics" })
 map("n", "<Tab><space>", ":Telescope resume<CR>", { desc = "Telescope resume" })
 
+-- Git
+map("n", "<BS>n", ":GitConflictNextConflict", { desc = "Git next conflict" })
+map("n", "<BS>p", ":GitConflictPrevConflict", { desc = "Git previous conflict" })
+map("n", "<BS>o", ":GitConflictChooseOurs", { desc = "Git choose ours" })
+map("n", "<BS>t", ":GitConflictChooseTheirs", { desc = "Git choose theirs" })
+
 -- LSP
 map("n", "K", ":lua vim.lsp.buf.hover()<CR>", { desc = "Hover" })
 map("n", "<leader>d", ":lua vim.diagnostic.open_float()<CR>", { desc = "Open diagnostics float" })
