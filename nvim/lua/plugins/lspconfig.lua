@@ -11,11 +11,16 @@ return {
 
 		local servers = {
 			clangd = {},
-			ts_ls = {},
 			tailwindcss = {},
 			rust_analyzer = {},
 			gopls = {},
 			astro = {},
+
+			ts_ls = {
+				on_attach = function(client, bufnr)
+					require("workspace-diagnostics").populate_workspace_diagnostics(client, bufnr)
+				end,
+			},
 
 			pyright = {
 				on_attach = function(client)

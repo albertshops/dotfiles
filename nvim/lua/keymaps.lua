@@ -12,8 +12,14 @@ map("n", "<Tab>s", ":Telescope live_grep<CR>", { desc = "Telescope search string
 map("n", "<Tab>m", ":Telescope marks<CR>", { desc = "Telescope marks" })
 map("n", "<Tab>r", ":Telescope registers<CR>", { desc = "Telescope registers" })
 map("n", "<Tab>c", ":Telescope quickfix<CR>", { desc = "Telescope quickfix" })
-map("n", "<Tab>d", ":Telescope diagnostics<CR>", { desc = "Telescope diagnostics" })
 map("n", "<Tab><space>", ":Telescope resume<CR>", { desc = "Telescope resume" })
+map("n", "<Tab>w", ":Telescope diagnostics<CR>", { desc = "Telescope warnings" })
+map("n", "<Tab>d", function()
+	local builtin = require("telescope.builtin")
+	builtin.diagnostics({
+		severity = vim.diagnostic.severity.ERROR,
+	})
+end, { desc = "Telescope diagnostics" })
 
 -- Git
 map("n", "<BS>n", ":GitConflictNextConflict", { desc = "Git next conflict" })
