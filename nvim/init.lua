@@ -480,8 +480,6 @@ require("lazy").setup({
 		},
 	},
 
-	-- { "artemave/workspace-diagnostics.nvim" },
-
 	{
 		"akinsho/git-conflict.nvim",
 		version = "*",
@@ -492,14 +490,17 @@ require("lazy").setup({
 vim.cmd([[colorscheme tokyonight]])
 
 -- [[ LSP ]]
-vim.lsp.config["lua_ls"] = {}
-vim.lsp.enable("lua_ls")
+vim.lsp.config["lua"] = {
+	cmd = { "lua-language-server" },
+	settings = { Lua = { diagnostics = { globals = { "vim" } } } },
+}
+vim.lsp.enable("lua")
 
-vim.lsp.config["vtsls"] = {
+vim.lsp.config["ts"] = {
 	cmd = { "vtsls", "--stdio" },
 	root_markers = { "package.json" },
 }
-vim.lsp.enable("vtsls")
+vim.lsp.enable("ts")
 
 -- [[ Keymaps ]]
 local map = vim.keymap.set
