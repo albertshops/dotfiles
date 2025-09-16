@@ -498,27 +498,6 @@ vim.lsp.enable("lua_ls")
 vim.lsp.config["vtsls"] = {
 	cmd = { "vtsls", "--stdio" },
 	root_markers = { "package.json" },
-	single_file_support = false,
-	settings = {
-		typescript = {
-			tsserver = {
-				experimental = {
-					enableProjectDiagnostics = true, -- workspace-wide diags
-				},
-				maxTsServerMemory = 4096,
-			},
-			preferences = {
-				includeInlayParameterNameHints = "all",
-			},
-		},
-		javascript = {
-			tsserver = {
-				experimental = {
-					enableProjectDiagnostics = true,
-				},
-			},
-		},
-	},
 }
 vim.lsp.enable("vtsls")
 
