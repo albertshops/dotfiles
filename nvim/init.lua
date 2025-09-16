@@ -495,22 +495,32 @@ vim.cmd([[colorscheme tokyonight]])
 vim.lsp.config["lua_ls"] = {}
 vim.lsp.enable("lua_ls")
 
-vim.lsp.config["ts_ls"] = {
-	cmd = { "typescript-language-server", "--stdio" },
-	root_markers = {
-		"package.json",
+vim.lsp.config["vtsls"] = {
+	cmd = { "vtsls", "--stdio" },
+	root_markers = { "package.json" },
+	single_file_support = false,
+	settings = {
+		typescript = {
+			tsserver = {
+				experimental = {
+					enableProjectDiagnostics = true, -- workspace-wide diags
+				},
+				maxTsServerMemory = 4096,
+			},
+			preferences = {
+				includeInlayParameterNameHints = "all",
+			},
+		},
+		javascript = {
+			tsserver = {
+				experimental = {
+					enableProjectDiagnostics = true,
+				},
+			},
+		},
 	},
-	filetypes = {
-		"javascript",
-		"javascriptreact",
-		"javascript.jsx",
-		"typescript",
-		"typescriptreact",
-		"typescript.tsx",
-	},
-	workspace_required = true,
 }
-vim.lsp.enable("ts_ls")
+vim.lsp.enable("vtsls")
 
 -- [[ Keymaps ]]
 local map = vim.keymap.set
