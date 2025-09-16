@@ -492,12 +492,21 @@ vim.cmd([[colorscheme tokyonight]])
 -- [[ LSP ]]
 vim.lsp.config["lua"] = {
 	cmd = { "lua-language-server" },
+	filetypes = { "lua" },
 	settings = { Lua = { diagnostics = { globals = { "vim" } } } },
 }
 vim.lsp.enable("lua")
 
 vim.lsp.config["ts"] = {
 	cmd = { "vtsls", "--stdio" },
+	filetypes = {
+		"typescript",
+		"typescriptreact",
+		"typescript.tsx",
+		"javascript",
+		"javascriptreact",
+		"javascript.jsx",
+	},
 	root_markers = { "package.json" },
 }
 vim.lsp.enable("ts")
@@ -594,6 +603,21 @@ map("n", "<C-t>", function()
 		stages = "fade",
 	})
 end, { desc = "Supermaven Toggle" })
+
+-- LSP
+map("n", "K", ":lua vim.lsp.buf.hover()<CR>", { desc = "Hover" })
+map("n", "<leader>d", ":lua vim.diagnostic.open_float()<CR>", { desc = "Open diagnostics float" })
+map("n", "gd", ":lua vim.lsp.buf.definition()<CR>", { desc = "Go to definition" })
+
+map("n", "<leader>a", ":lua vim.lsp.buf.code_action()<CR>", { desc = "Code action" })
+map("n", "<leader>r", function()
+	local original_input = vim.ui.input
+	vim.ui.input = function(opts, on_confirm)
+		opts.default = "" -- Clear the default input
+		original_input(opts, on_confirm)
+	end
+	vim.lsp.buf.rename()
+end, { desc = "Rename symbol" })
 
 -- close matching whatever
 -- surround
