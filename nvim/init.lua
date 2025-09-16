@@ -79,108 +79,41 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 		error("Error cloning lazy.nvim:\n" .. out)
 	end
 end
-
----@type vim.Option
-local rtp = vim.opt.rtp
-rtp:prepend(lazypath)
+vim.opt.rtp:prepend(lazypath)
 
 -- [[ Configure and install plugins ]]
 require("lazy").setup({
 	{
-		"hrsh7th/nvim-cmp",
-		event = "InsertEnter",
-		dependencies = {
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-path",
-			"hrsh7th/cmp-cmdline",
-			"hrsh7th/cmp-nvim-lsp",
+		"saghen/blink.cmp",
+		dependencies = { "rafamadriz/friendly-snippets" },
+		version = "1.*",
+		opts = {
+			keymap = {
+				preset = "none",
+				["<Tab>"] = { "select_next", "fallback" },
+				["<S-Tab>"] = { "select_prev" },
+				["<CR>"] = { "accept", "fallback" },
+			},
+			appearance = {
+				nerd_font_variant = "mono",
+			},
+			completion = { preselect = true, documentation = { auto_show = true } },
+			sources = {
+				default = { "lsp", "path", "snippets", "buffer" },
+			},
+			fuzzy = { implementation = "prefer_rust_with_warning" },
 		},
-		config = function()
-			local cmp = require("cmp")
-			cmp.setup({
-				mapping = {
-					["<CR>"] = cmp.mapping.confirm({ select = false }),
-					["<Tab>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.select_next_item()
-						else
-							fallback()
-						end
-					end, {
-						"i",
-						"s",
-					}),
-					["<S-Tab>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.select_prev_item()
-						else
-							fallback()
-						end
-					end, {
-						"i",
-						"s",
-					}),
-				},
-				formatting = {
-					fields = { "kind", "abbr", "menu" },
-					format = function(entry, vim_item)
-						local kind_icons = {
-							Text = "",
-							Method = "m",
-							Function = "",
-							Constructor = "",
-							Field = "",
-							Variable = "",
-							Class = "",
-							Interface = "",
-							Module = "",
-							Property = "",
-							Unit = "",
-							Value = "",
-							Enum = "",
-							Keyword = "",
-							Snippet = "",
-							Color = "",
-							File = "",
-							Reference = "",
-							Folder = "",
-							EnumMember = "",
-							Constant = "",
-							Struct = "",
-							Event = "",
-							Operator = "",
-							TypeParameter = "",
-						}
+		opts_extend = { "sources.default" },
+	},
 
-						vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
-						vim_item.menu = ({
-							nvim_lsp = "[LSP]",
-							buffer = "[Buffer]",
-						})[entry.source.name]
-						return vim_item
-					end,
+	{
+		"supermaven-inc/supermaven-nvim",
+		config = function()
+			require("supermaven-nvim").setup({
+				keymaps = {
+					accept_suggestion = "<C-s>",
+					accept_word = "<C-n>",
 				},
-				sources = {
-					{ name = "nvim_lsp" },
-					{ name = "buffer" },
-				},
-				confirm_opts = {
-					behavior = cmp.ConfirmBehavior.Replace,
-					select = false,
-				},
-				window = {
-					completion = {
-						border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
-					},
-					documentation = {
-						border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
-					},
-				},
-				experimental = {
-					ghost_text = false,
-					native_menu = false,
-				},
-				preselect = cmp.PreselectMode.None,
 			})
 		end,
 	},
@@ -269,19 +202,6 @@ require("lazy").setup({
 				delay = 3,
 			},
 		},
-	},
-
-	{
-		"supermaven-inc/supermaven-nvim",
-		config = function()
-			require("supermaven-nvim").setup({
-				keymaps = {
-					accept_suggestion = "<C-s>",
-					clear_suggestion = "<C-d>",
-					accept_word = "<C-n>",
-				},
-			})
-		end,
 	},
 
 	{
@@ -396,7 +316,7 @@ require("lazy").setup({
 			blocklist = {
 				default = {
 					highlights = {
-						laststatus_3 = function(win, active)
+						laststatus_3 = function()
 							if vim.go.laststatus == 3 then
 								return "StatusLine"
 							end
@@ -618,6 +538,14 @@ map("n", "<leader>r", function()
 	end
 	vim.lsp.buf.rename()
 end, { desc = "Rename symbol" })
+
+map("i", "<C-d>", function()
+	require("blink.cmp").hide()
+	local cp = require("supermaven-nvim.completion_preview")
+	if cp.ns_id then
+		vim.api.nvim_buf_clear_namespace(0, cp.ns_id, 0, -1)
+	end
+end, { desc = "Hide Blink and clear Supermaven suggestion" })
 
 -- close matching whatever
 -- surround
