@@ -107,7 +107,7 @@ alt-i = 'workspace i'
 alt-g = 'workspace gpt'
 alt-c = 'workspace chrome'
 alt-r = 'workspace bambu'
-alt-l = 'workspace ableton'
+alt-l = 'workspace linear'
 
 alt-d = 'workspace db'
 alt-h = 'workspace firefox'
@@ -131,7 +131,7 @@ alt-shift-i = ['move-node-to-workspace i', 'workspace i']
 alt-shift-g = ['move-node-to-workspace gpt', 'workspace gpt']
 alt-shift-c = ['move-node-to-workspace chrome', 'workspace chrome']
 alt-shift-r = ['move-node-to-workspace bambu', 'workspace bambu']
-alt-shift-l = ['move-node-to-workspace ableton', 'workspace ableton']
+alt-shift-l = ['move-node-to-workspace linear', 'workspace linear']
 
 alt-shift-d = ['move-node-to-workspace db', 'workspace db']
 alt-shift-h = ['move-node-to-workspace firefox', 'workspace firefox']
@@ -212,8 +212,9 @@ if.app-name-regex-substring = 'dbeaver'
 run = 'move-node-to-workspace db'
 
 [[on-window-detected]]
-if.app-id = 'com.ableton.live'
-run = 'move-node-to-workspace ableton'
+#if.app-id = 'com.ableton.live'
+if.app-id = 'linear'
+run = 'move-node-to-workspace linear'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'affinity'

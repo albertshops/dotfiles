@@ -4,6 +4,115 @@
             "complex_modifications": {
                 "rules": [
                     {
+                        "description": "Right Control Symbol Mappings (brackets)",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "2",
+                                    "modifiers": { "mandatory": ["right_control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "open_bracket",
+                                        "modifiers": []
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "3",
+                                    "modifiers": { "mandatory": ["right_control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "open_bracket",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "4",
+                                    "modifiers": { "mandatory": ["right_control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "9",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "5",
+                                    "modifiers": { "mandatory": ["right_control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "comma",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "6",
+                                    "modifiers": { "mandatory": ["right_control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "period",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "7",
+                                    "modifiers": { "mandatory": ["right_control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "0",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "8",
+                                    "modifiers": { "mandatory": ["right_control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "close_bracket",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "9",
+                                    "modifiers": { "mandatory": ["right_control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "close_bracket",
+                                        "modifiers": []
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "arrows",
                         "manipulators": [
                             {
@@ -89,8 +198,8 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "quote",
-                                        "modifiers": ["shift"]
+                                        "key_code": "grave_accent_and_tilde",
+                                        "modifiers": []
                                     }
                                 ],
                                 "type": "basic"
@@ -103,7 +212,7 @@
                                 "to": [
                                     {
                                         "key_code": "comma",
-                                        "modifiers": ["shift"]
+                                        "modifiers": []
                                     }
                                 ],
                                 "type": "basic"
@@ -116,7 +225,7 @@
                                 "to": [
                                     {
                                         "key_code": "period",
-                                        "modifiers": ["shift"]
+                                        "modifiers": []
                                     }
                                 ],
                                 "type": "basic"
@@ -160,7 +269,12 @@
                                     "key_code": "g",
                                     "modifiers": { "mandatory": ["right_control"] }
                                 },
-                                "to": [{ "key_code": "grave_accent_and_tilde" }],
+                                "to": [
+                                    {
+                                        "key_code": "period",
+                                        "modifiers": ["shift"]
+                                    }
+                                ],
                                 "type": "basic"
                             },
                             {
@@ -196,7 +310,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "period",
+                                        "key_code": "comma",
                                         "modifiers": ["shift"]
                                     }
                                 ],
@@ -434,8 +548,8 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "vk_none",
-                                        "modifiers": []
+                                        "key_code": "backslash",
+                                        "modifiers": ["shift"]
                                     }
                                 ],
                                 "type": "basic"
@@ -460,6 +574,7 @@
                     },
                     {
                         "description": "numbers / brackets",
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "from": { "key_code": "2" },
