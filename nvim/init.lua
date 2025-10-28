@@ -112,7 +112,7 @@ require("lazy").setup({
 			require("supermaven-nvim").setup({
 				keymaps = {
 					accept_suggestion = "<C-s>",
-					accept_word = "<C-n>",
+					accept_word = "<C-w>",
 				},
 			})
 		end,
@@ -405,6 +405,18 @@ require("lazy").setup({
 		version = "*",
 		config = true,
 	},
+
+	{
+		"akinsho/toggleterm.nvim",
+		version = "*",
+		opts = {
+			open_mapping = [[<C-t>]],
+			direction = "float",
+			float_opts = {
+				border = "curved",
+			},
+		},
+	},
 })
 
 vim.cmd([[colorscheme tokyonight]])
@@ -504,7 +516,7 @@ for _, command in ipairs(commands) do
 end
 
 -- toggle supermaven
-map("i", "<C-t>", function()
+map("i", "<C-a>", function()
 	local api = require("supermaven-nvim.api")
 	api.toggle()
 	require("notify")("Supermaven: " .. tostring(api.is_running()), "info", {
@@ -513,8 +525,8 @@ map("i", "<C-t>", function()
 		stages = "fade",
 	})
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-d>", true, false, true), "i", false)
-end, { desc = "Supermaven Toggle" })
-map("n", "<C-t>", function()
+end, { desc = "Autocomplete Toggle" })
+map("n", "<C-a>", function()
 	local api = require("supermaven-nvim.api")
 	api.toggle()
 	require("notify")("Supermaven: " .. tostring(api.is_running()), "info", {
@@ -522,7 +534,7 @@ map("n", "<C-t>", function()
 		timeout = 100,
 		stages = "fade",
 	})
-end, { desc = "Supermaven Toggle" })
+end, { desc = "Autocomplete Toggle" })
 
 -- LSP
 map("n", "K", ":lua vim.lsp.buf.hover()<CR>", { desc = "Hover" })
@@ -546,6 +558,25 @@ map("i", "<C-d>", function()
 		vim.api.nvim_buf_clear_namespace(0, cp.ns_id, 0, -1)
 	end
 end, { desc = "Hide Blink and clear Supermaven suggestion" })
+
+-- teriminal mode
+map("t", "<Esc>", [[<C-\><C-n>]], { desc = "Escape terminal mode" })
+vim.api.nvim_create_autocmd({ "TermEnter", "TermLeave" }, {
+	callback = function(ev)
+		local buf = ev.buf
+		if vim.bo[buf].buftype == "terminal" then
+			if ev.event == "TermLeave" then
+				-- entering normal mode
+				vim.wo.number = true
+				vim.wo.relativenumber = true
+			else
+				-- entering insert/terminal mode
+				vim.wo.number = false
+				vim.wo.relativenumber = false
+			end
+		end
+	end,
+})
 
 -- close matching whatever
 -- surround
