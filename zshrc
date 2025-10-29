@@ -1,3 +1,5 @@
+# stty -ixon
+
 export PROMPT="%F{87}%~%f%F{87} $ %f"
 export RPROMPT=""
 

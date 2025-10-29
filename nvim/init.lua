@@ -516,25 +516,25 @@ for _, command in ipairs(commands) do
 end
 
 -- toggle supermaven
-map("i", "<C-a>", function()
-	local api = require("supermaven-nvim.api")
-	api.toggle()
-	require("notify")("Supermaven: " .. tostring(api.is_running()), "info", {
-		render = "minimal",
-		timeout = 100,
-		stages = "fade",
-	})
-	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-d>", true, false, true), "i", false)
-end, { desc = "Autocomplete Toggle" })
-map("n", "<C-a>", function()
-	local api = require("supermaven-nvim.api")
-	api.toggle()
-	require("notify")("Supermaven: " .. tostring(api.is_running()), "info", {
-		render = "minimal",
-		timeout = 100,
-		stages = "fade",
-	})
-end, { desc = "Autocomplete Toggle" })
+-- map("i", "<C-a>", function()
+-- 	local api = require("supermaven-nvim.api")
+-- 	api.toggle()
+-- 	require("notify")("Supermaven: " .. tostring(api.is_running()), "info", {
+-- 		render = "minimal",
+-- 		timeout = 100,
+-- 		stages = "fade",
+-- 	})
+-- 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-d>", true, false, true), "i", false)
+-- end, { desc = "Autocomplete Toggle" })
+-- map("n", "<C-a>", function()
+-- 	local api = require("supermaven-nvim.api")
+-- 	api.toggle()
+-- 	require("notify")("Supermaven: " .. tostring(api.is_running()), "info", {
+-- 		render = "minimal",
+-- 		timeout = 100,
+-- 		stages = "fade",
+-- 	})
+-- end, { desc = "Autocomplete Toggle" })
 
 -- LSP
 map("n", "K", ":lua vim.lsp.buf.hover()<CR>", { desc = "Hover" })
