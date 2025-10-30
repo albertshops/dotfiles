@@ -63,383 +63,383 @@ vim.opt.incsearch = true
 
 -- Highlight when yanking (copying) text
 vim.api.nvim_create_autocmd("TextYankPost", {
-	desc = "Highlight when yanking (copying) text",
-	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
-	callback = function()
-		vim.hl.on_yank()
-	end,
+  desc = "Highlight when yanking (copying) text",
+  group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+  callback = function()
+    vim.hl.on_yank()
+  end,
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-	if vim.v.shell_error ~= 0 then
-		error("Error cloning lazy.nvim:\n" .. out)
-	end
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    error("Error cloning lazy.nvim:\n" .. out)
+  end
 end
 vim.opt.rtp:prepend(lazypath)
 
 -- [[ Configure and install plugins ]]
 require("lazy").setup({
-	{
-		"saghen/blink.cmp",
-		dependencies = { "rafamadriz/friendly-snippets" },
-		version = "1.*",
-		opts = {
-			keymap = {
-				preset = "none",
-				["<Tab>"] = { "select_next", "fallback" },
-				["<S-Tab>"] = { "select_prev" },
-				["<CR>"] = { "accept", "fallback" },
-			},
-			appearance = {
-				nerd_font_variant = "mono",
-			},
-			completion = { preselect = true, documentation = { auto_show = true } },
-			sources = {
-				default = { "lsp", "path", "snippets", "buffer" },
-			},
-			fuzzy = { implementation = "prefer_rust_with_warning" },
-		},
-		opts_extend = { "sources.default" },
-	},
+  {
+    "saghen/blink.cmp",
+    dependencies = { "rafamadriz/friendly-snippets" },
+    version = "1.*",
+    opts = {
+      keymap = {
+        preset = "none",
+        ["<Tab>"] = { "select_next", "fallback" },
+        ["<S-Tab>"] = { "select_prev" },
+        ["<CR>"] = { "accept", "fallback" },
+      },
+      appearance = {
+        nerd_font_variant = "mono",
+      },
+      completion = { preselect = true, documentation = { auto_show = true } },
+      sources = {
+        default = { "lsp", "path", "snippets", "buffer" },
+      },
+      fuzzy = { implementation = "prefer_rust_with_warning" },
+    },
+    opts_extend = { "sources.default" },
+  },
 
-	{
-		"supermaven-inc/supermaven-nvim",
-		config = function()
-			require("supermaven-nvim").setup({
-				keymaps = {
-					accept_suggestion = "<C-s>",
-					accept_word = "<C-w>",
-				},
-			})
-		end,
-	},
+  {
+    "supermaven-inc/supermaven-nvim",
+    config = function()
+      require("supermaven-nvim").setup({
+        keymaps = {
+          accept_suggestion = "<C-s>",
+          accept_word = "<C-w>",
+        },
+      })
+    end,
+  },
 
-	{ "numToStr/Comment.nvim" },
+  { "numToStr/Comment.nvim" },
 
-	{
-		"stevearc/conform.nvim",
-		opts = {
-			formatters_by_ft = {
-				lua = { "stylua" },
-				rust = { "rustfmt" },
-				javascript = { "prettierd" },
-				typescript = { "prettierd" },
-				javascriptreact = { "prettierd" },
-				typescriptreact = { "prettierd" },
-				css = { "prettierd" },
-				json = { "prettierd" },
-				markdown = { "prettierd" },
-			},
-			format_on_save = {
-				lsp_fallback = true,
-				async = false,
-				timeout_ms = 1000,
-			},
-		},
-	},
+  {
+    "stevearc/conform.nvim",
+    opts = {
+      formatters_by_ft = {
+        lua = { "stylua" },
+        rust = { "rustfmt" },
+        javascript = { "prettierd" },
+        typescript = { "prettierd" },
+        javascriptreact = { "prettierd" },
+        typescriptreact = { "prettierd" },
+        css = { "prettierd" },
+        json = { "prettierd" },
+        markdown = { "prettierd" },
+      },
+      format_on_save = {
+        lsp_fallback = true,
+        async = false,
+        timeout_ms = 1000,
+      },
+    },
+  },
 
-	{ "kdheepak/lazygit.nvim" },
+  { "kdheepak/lazygit.nvim" },
 
-	{
-		"nvim-lualine/lualine.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {
-			sections = {
-				lualine_a = { "mode" },
-				lualine_b = {
-					"branch",
-					"diff",
-					{
-						"diagnostics",
-						sources = { "nvim_diagnostic" },
-						symbols = { error = "", warn = "", info = "", hint = "" },
-					},
-				},
-				lualine_c = { { "filename", path = 2 } },
+  {
+    "nvim-lualine/lualine.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = {
+      sections = {
+        lualine_a = { "mode" },
+        lualine_b = {
+          "branch",
+          "diff",
+          {
+            "diagnostics",
+            sources = { "nvim_diagnostic" },
+            symbols = { error = "", warn = "", info = "", hint = "" },
+          },
+        },
+        lualine_c = { { "filename", path = 2 } },
 
-				lualine_x = { "filetype" },
-				lualine_y = { "progress" },
-				lualine_z = { "location" },
-			},
-		},
-	},
+        lualine_x = { "filetype" },
+        lualine_y = { "progress" },
+        lualine_z = { "location" },
+      },
+    },
+  },
 
-	{ "rcarriga/nvim-notify" },
+  { "rcarriga/nvim-notify" },
 
-	{
-		"stevearc/oil.nvim",
-		opts = {
-			use_default_keymaps = false,
-			keymaps = {
-				["<CR>"] = "actions.select",
-				["-"] = { "actions.parent", mode = "n" },
-			},
-			view_options = {
-				show_hidden = true,
-			},
-			columns = {},
-		},
-	},
+  {
+    "stevearc/oil.nvim",
+    opts = {
+      use_default_keymaps = false,
+      keymaps = {
+        ["<CR>"] = "actions.select",
+        ["-"] = { "actions.parent", mode = "n" },
+      },
+      view_options = {
+        show_hidden = true,
+      },
+      columns = {},
+    },
+  },
 
-	{ "b0o/schemastore.nvim" },
+  { "b0o/schemastore.nvim" },
 
-	{
-		"declancm/cinnamon.nvim",
-		version = "*", -- use latest release
-		opts = {
-			-- Disable all provided keymaps
-			keymaps = {
-				basic = false,
-				extra = false,
-			},
-			-- Only scroll the window
-			options = {
-				mode = "window",
-				delay = 3,
-			},
-		},
-	},
+  {
+    "declancm/cinnamon.nvim",
+    version = "*", -- use latest release
+    opts = {
+      -- Disable all provided keymaps
+      keymaps = {
+        basic = false,
+        extra = false,
+      },
+      -- Only scroll the window
+      options = {
+        mode = "window",
+        delay = 3,
+      },
+    },
+  },
 
-	{
-		"kylechui/nvim-surround",
-		event = "VeryLazy",
-		opts = {},
-	},
+  {
+    "kylechui/nvim-surround",
+    event = "VeryLazy",
+    opts = {},
+  },
 
-	{
-		"nvim-telescope/telescope.nvim",
-		tag = "0.1.8",
-		dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope-file-browser.nvim" },
-		config = function()
-			local actions = require("telescope.actions")
-			local action_state = require("telescope.actions.state")
-			local builtin = require("telescope.builtin")
-			local config = require("telescope.config").values
+  {
+    "nvim-telescope/telescope.nvim",
+    tag = "0.1.8",
+    dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope-file-browser.nvim" },
+    config = function()
+      local actions = require("telescope.actions")
+      local action_state = require("telescope.actions.state")
+      local builtin = require("telescope.builtin")
+      local config = require("telescope.config").values
 
-			local toggle_search_pickers = function(prompt_bufnr)
-				local current_picker = action_state.get_current_picker(prompt_bufnr)
-				local query = current_picker:_get_prompt()
-				local picker_name = current_picker.prompt_title or ""
+      local toggle_search_pickers = function(prompt_bufnr)
+        local current_picker = action_state.get_current_picker(prompt_bufnr)
+        local query = current_picker:_get_prompt()
+        local picker_name = current_picker.prompt_title or ""
 
-				actions.close(prompt_bufnr)
+        actions.close(prompt_bufnr)
 
-				if picker_name:match("Find Files") then
-					builtin.live_grep({ default_text = query })
-				else
-					builtin.find_files({ default_text = query })
-				end
-			end
+        if picker_name:match("Find Files") then
+          builtin.live_grep({ default_text = query })
+        else
+          builtin.find_files({ default_text = query })
+        end
+      end
 
-			require("telescope").setup({
-				defaults = {
-					vimgrep_arguments = table.insert(config.vimgrep_arguments, "--fixed-strings"),
+      require("telescope").setup({
+        defaults = {
+          vimgrep_arguments = table.insert(config.vimgrep_arguments, "--fixed-strings"),
 
-					layout_strategy = "vertical", -- flex
-					layout_config = {
-						mirror = true,
-						prompt_position = "top",
-					},
-					sorting_strategy = "ascending",
+          layout_strategy = "vertical", -- flex
+          layout_config = {
+            mirror = true,
+            prompt_position = "top",
+          },
+          sorting_strategy = "ascending",
 
-					prompt_prefix = " ",
-					selection_caret = " ",
-					path_display = { "smart" },
+          prompt_prefix = " ",
+          selection_caret = " ",
+          path_display = { "smart" },
 
-					mappings = {
-						i = {
-							["<C-s>"] = toggle_search_pickers,
-							["<CR>"] = actions.select_default,
-							["<Esc>"] = "close",
-							["<C-q>"] = function(buf_nr)
-								actions.smart_send_to_qflist(buf_nr)
-								builtin.quickfix()
-							end,
-						},
-					},
-				},
-				pickers = {
-					find_files = {},
-					buffers = {
-						sort_lastused = true,
-						ignore_current_buffer = true,
-						filter = function(buf)
-							local filetype = vim.api.nvim_buf_get_option(buf.bufnr, "filetype")
-							return filetype ~= "netrw"
-						end,
-					},
-				},
-			})
-		end,
-	},
+          mappings = {
+            i = {
+              ["<C-s>"] = toggle_search_pickers,
+              ["<CR>"] = actions.select_default,
+              ["<Esc>"] = "close",
+              ["<C-q>"] = function(buf_nr)
+                actions.smart_send_to_qflist(buf_nr)
+                builtin.quickfix()
+              end,
+            },
+          },
+        },
+        pickers = {
+          find_files = {},
+          buffers = {
+            sort_lastused = true,
+            ignore_current_buffer = true,
+            filter = function(buf)
+              local filetype = vim.api.nvim_buf_get_option(buf.bufnr, "filetype")
+              return filetype ~= "netrw"
+            end,
+          },
+        },
+      })
+    end,
+  },
 
-	{
-		"christoomey/vim-tmux-navigator",
-		cmd = {
-			"TmuxNavigateLeft",
-			"TmuxNavigateDown",
-			"TmuxNavigateUp",
-			"TmuxNavigateRight",
-			"TmuxNavigatorProcessList",
-		},
-		keys = {
-			{ "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
-			{ "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
-			{ "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
-			{ "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
-		},
-	},
+  {
+    "christoomey/vim-tmux-navigator",
+    cmd = {
+      "TmuxNavigateLeft",
+      "TmuxNavigateDown",
+      "TmuxNavigateUp",
+      "TmuxNavigateRight",
+      "TmuxNavigatorProcessList",
+    },
+    keys = {
+      { "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
+      { "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
+      { "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
+      { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
+    },
+  },
 
-	{
-		"folke/tokyonight.nvim",
-		opts = { transparent = true },
-	},
+  {
+    "folke/tokyonight.nvim",
+    opts = { transparent = true },
+  },
 
-	{
-		"nvim-treesitter/nvim-treesitter",
-		opts = { auto_install = true },
-	},
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = { auto_install = true },
+  },
 
-	{ "folke/trouble.nvim" },
+  { "folke/trouble.nvim" },
 
-	{
-		"tadaa/vimade",
-		opts = {
-			recipe = { "default", { animate = false } },
-			ncmode = "windows",
-			fadelevel = 0.6, -- any value between 0 and 1. 0 is hidden and 1 is opaque.
-			basebg = { 29, 31, 33 },
-			tint = {},
-			blocklist = {
-				default = {
-					highlights = {
-						laststatus_3 = function()
-							if vim.go.laststatus == 3 then
-								return "StatusLine"
-							end
-						end,
-						-- Prevent ActiveTabs from highlighting.
-						"TabLineSel",
-						"Pmenu",
-						"PmenuSel",
-						"PmenuKind",
-						"PmenuKindSel",
-						"PmenuExtra",
-						"PmenuExtraSel",
-						"PmenuSbar",
-						"PmenuThumb",
-					},
-					buf_opts = { buftype = { "prompt" } },
-				},
-				default_block_floats = function(win, active)
-					return win.win_config.relative ~= ""
-							and (win ~= active or win.buf_opts.buftype == "terminal")
-							and true
-						or false
-				end,
-			},
-			link = {},
-			groupdiff = true, -- links diffs so that they style together
-			groupscrollbind = false, -- link scrollbound windows so that they style together.
-			enablefocusfading = true,
-			checkinterval = 1000,
-			usecursorhold = false,
-			nohlcheck = true,
-			focus = {
-				providers = {
-					filetypes = {
-						default = {
-							{
-								"treesitter",
-								{
-									min_node_size = 2,
-									min_size = 1,
-									max_size = 0,
-									-- exclude types either too large and/or mundane
-									exclude = {
-										"script_file",
-										"stream",
-										"document",
-										"source_file",
-										"translation_unit",
-										"chunk",
-										"module",
-										"stylesheet",
-										"statement_block",
-										"block",
-										"pair",
-										"program",
-										"switch_case",
-										"catch_clause",
-										"finally_clause",
-										"property_signature",
-										"dictionary",
-										"assignment",
-										"expression_statement",
-										"compound_statement",
-									},
-								},
-							},
-							{
-								"blanks",
-								{
-									min_size = 1,
-									max_size = "35%",
-								},
-							},
-							{ "static", {
-								size = "35%",
-							} },
-						},
-					},
-				},
-			},
-		},
-	},
+  {
+    "tadaa/vimade",
+    opts = {
+      recipe = { "default", { animate = false } },
+      ncmode = "windows",
+      fadelevel = 0.6, -- any value between 0 and 1. 0 is hidden and 1 is opaque.
+      basebg = { 29, 31, 33 },
+      tint = {},
+      blocklist = {
+        default = {
+          highlights = {
+            laststatus_3 = function()
+              if vim.go.laststatus == 3 then
+                return "StatusLine"
+              end
+            end,
+            -- Prevent ActiveTabs from highlighting.
+            "TabLineSel",
+            "Pmenu",
+            "PmenuSel",
+            "PmenuKind",
+            "PmenuKindSel",
+            "PmenuExtra",
+            "PmenuExtraSel",
+            "PmenuSbar",
+            "PmenuThumb",
+          },
+          buf_opts = { buftype = { "prompt" } },
+        },
+        default_block_floats = function(win, active)
+          return win.win_config.relative ~= ""
+              and (win ~= active or win.buf_opts.buftype == "terminal")
+              and true
+              or false
+        end,
+      },
+      link = {},
+      groupdiff = true,     -- links diffs so that they style together
+      groupscrollbind = false, -- link scrollbound windows so that they style together.
+      enablefocusfading = true,
+      checkinterval = 1000,
+      usecursorhold = false,
+      nohlcheck = true,
+      focus = {
+        providers = {
+          filetypes = {
+            default = {
+              {
+                "treesitter",
+                {
+                  min_node_size = 2,
+                  min_size = 1,
+                  max_size = 0,
+                  -- exclude types either too large and/or mundane
+                  exclude = {
+                    "script_file",
+                    "stream",
+                    "document",
+                    "source_file",
+                    "translation_unit",
+                    "chunk",
+                    "module",
+                    "stylesheet",
+                    "statement_block",
+                    "block",
+                    "pair",
+                    "program",
+                    "switch_case",
+                    "catch_clause",
+                    "finally_clause",
+                    "property_signature",
+                    "dictionary",
+                    "assignment",
+                    "expression_statement",
+                    "compound_statement",
+                  },
+                },
+              },
+              {
+                "blanks",
+                {
+                  min_size = 1,
+                  max_size = "35%",
+                },
+              },
+              { "static", {
+                size = "35%",
+              } },
+            },
+          },
+        },
+      },
+    },
+  },
 
-	{
-		"akinsho/git-conflict.nvim",
-		version = "*",
-		config = true,
-	},
+  {
+    "akinsho/git-conflict.nvim",
+    version = "*",
+    config = true,
+  },
 
-	{
-		"akinsho/toggleterm.nvim",
-		version = "*",
-		opts = {
-			open_mapping = [[<C-t>]],
-			direction = "float",
-			float_opts = {
-				border = "curved",
-			},
-		},
-	},
+  {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    opts = {
+      open_mapping = [[<C-t>]],
+      direction = "float",
+      float_opts = {
+        border = "curved",
+      },
+    },
+  },
 })
 
 vim.cmd([[colorscheme tokyonight]])
 
 -- [[ LSP ]]
 vim.lsp.config["lua"] = {
-	cmd = { "lua-language-server" },
-	filetypes = { "lua" },
-	settings = { Lua = { diagnostics = { globals = { "vim" } } } },
+  cmd = { "lua-language-server" },
+  filetypes = { "lua" },
+  settings = { Lua = { diagnostics = { globals = { "vim" } } } },
 }
 vim.lsp.enable("lua")
 
 vim.lsp.config["ts"] = {
-	cmd = { "vtsls", "--stdio" },
-	filetypes = {
-		"typescript",
-		"typescriptreact",
-		"typescript.tsx",
-		"javascript",
-		"javascriptreact",
-		"javascript.jsx",
-	},
-	root_markers = { "package.json" },
+  cmd = { "vtsls", "--stdio" },
+  filetypes = {
+    "typescript",
+    "typescriptreact",
+    "typescript.tsx",
+    "javascript",
+    "javascriptreact",
+    "javascript.jsx",
+  },
+  root_markers = { "package.json" },
 }
 vim.lsp.enable("ts")
 
@@ -448,45 +448,45 @@ local map = vim.keymap.set
 
 -- reload init.lua
 map("n", "<leader>i", function()
-	dofile(vim.env.MYVIMRC)
-	print("Reloaded init.lua")
+  dofile(vim.env.MYVIMRC)
+  print("Reloaded init.lua")
 end)
 
 -- split pane
 map("n", "<C-v>", ":vsplit<CR><C-w>l", { noremap = true, silent = true })
 
 local function has_neighbor(dir)
-	local cur = vim.api.nvim_get_current_win()
-	vim.cmd("wincmd " .. dir) -- try move
-	local moved = (vim.api.nvim_get_current_win() ~= cur)
-	if moved then
-		vim.api.nvim_set_current_win(cur)
-	end
-	return moved
+  local cur = vim.api.nvim_get_current_win()
+  vim.cmd("wincmd " .. dir) -- try move
+  local moved = (vim.api.nvim_get_current_win() ~= cur)
+  if moved then
+    vim.api.nvim_set_current_win(cur)
+  end
+  return moved
 end
 
 local function smart_resize(toward)
-	local delta = 2
-	if toward == "left" then
-		if has_neighbor("h") then
-			vim.cmd("vertical resize +" .. delta) -- take space from left neighbor
-		elseif has_neighbor("l") then
-			vim.cmd("vertical resize -" .. delta) -- no left neighbor -> give to right
-		end
-	else -- toward == 'right'
-		if has_neighbor("l") then
-			vim.cmd("vertical resize +" .. delta) -- take space from right neighbor
-		elseif has_neighbor("h") then
-			vim.cmd("vertical resize -" .. delta) -- no right neighbor -> give to left
-		end
-	end
+  local delta = 2
+  if toward == "left" then
+    if has_neighbor("h") then
+      vim.cmd("vertical resize +" .. delta) -- take space from left neighbor
+    elseif has_neighbor("l") then
+      vim.cmd("vertical resize -" .. delta) -- no left neighbor -> give to right
+    end
+  else                                   -- toward == 'right'
+    if has_neighbor("l") then
+      vim.cmd("vertical resize +" .. delta) -- take space from right neighbor
+    elseif has_neighbor("h") then
+      vim.cmd("vertical resize -" .. delta) -- no right neighbor -> give to left
+    end
+  end
 end
 
 map("n", "<C-Left>", function()
-	smart_resize("left")
+  smart_resize("left")
 end)
 map("n", "<C-Right>", function()
-	smart_resize("right")
+  smart_resize("right")
 end)
 
 -- oil
@@ -495,10 +495,10 @@ map("n", "<leader>o", ":Oil<CR>", { desc = "Oil" })
 -- toggle comments
 map("n", "<leader>c", ":lua require('Comment.api').toggle.linewise.current()<CR>", { desc = "Toggle comment" })
 map("v", "<leader>c", function()
-	local api = require("Comment.api")
-	local esc = vim.api.nvim_replace_termcodes("<ESC>", true, false, true)
-	vim.api.nvim_feedkeys(esc, "nx", false)
-	api.toggle.linewise(vim.fn.visualmode())
+  local api = require("Comment.api")
+  local esc = vim.api.nvim_replace_termcodes("<ESC>", true, false, true)
+  vim.api.nvim_feedkeys(esc, "nx", false)
+  api.toggle.linewise(vim.fn.visualmode())
 end, { desc = "Toggle comment" })
 
 -- clipboard
@@ -518,19 +518,19 @@ map("n", "<Tab>c", ":Telescope quickfix<CR>", { desc = "Telescope quickfix" })
 map("n", "<Tab><space>", ":Telescope resume<CR>", { desc = "Telescope resume" })
 map("n", "<Tab>w", ":Telescope diagnostics<CR>", { desc = "Telescope warnings" })
 map("n", "<Tab>d", function()
-	local builtin = require("telescope.builtin")
-	builtin.diagnostics({
-		severity = vim.diagnostic.severity.ERROR,
-	})
+  local builtin = require("telescope.builtin")
+  builtin.diagnostics({
+    severity = vim.diagnostic.severity.ERROR,
+  })
 end, { desc = "Telescope diagnostics" })
 
 -- git
 map("n", "<leader>g", ":LazyGit<CR>", { desc = "LazyGit" })
-map("n", "<BS>j", ":GitConflictNextConflict", { desc = "Git next conflict" })
-map("n", "<BS>k", ":GitConflictPrevConflict", { desc = "Git previous conflict" })
-map("n", "<BS>o", ":GitConflictChooseOurs", { desc = "Git choose ours" })
-map("n", "<BS>i", ":GitConflictChooseTheirs", { desc = "Git choose incoming" })
-map("n", "<BS>a", ":GitConflictChooseBoth", { desc = "Git choose all" })
+map("n", "<BS>j", ":GitConflictNextConflict<CR>", { desc = "Git next conflict" })
+map("n", "<BS>k", ":GitConflictPrevConflict<CR>", { desc = "Git previous conflict" })
+map("n", "<BS>o", ":GitConflictChooseOurs<CR>", { desc = "Git choose ours" })
+map("n", "<BS>i", ":GitConflictChooseTheirs<CR>", { desc = "Git choose incoming" })
+map("n", "<BS>a", ":GitConflictChooseBoth<CR>", { desc = "Git choose all" })
 
 -- indent
 map("v", "<", "<gv", { desc = "Indent" })
@@ -548,9 +548,9 @@ local commands = { "<C-U>", "<C-D>", "{", "}", "j", "k" }
 local cinnamon = require("cinnamon")
 cinnamon.setup()
 for _, command in ipairs(commands) do
-	map("n", command, function()
-		cinnamon.scroll(command)
-	end)
+  map("n", command, function()
+    cinnamon.scroll(command)
+  end)
 end
 
 -- toggle supermaven
@@ -581,39 +581,39 @@ map("n", "gd", ":lua vim.lsp.buf.definition()<CR>", { desc = "Go to definition" 
 
 map("n", "<leader>a", ":lua vim.lsp.buf.code_action()<CR>", { desc = "Code action" })
 map("n", "<leader>r", function()
-	local original_input = vim.ui.input
-	vim.ui.input = function(opts, on_confirm)
-		opts.default = "" -- Clear the default input
-		original_input(opts, on_confirm)
-	end
-	vim.lsp.buf.rename()
+  local original_input = vim.ui.input
+  vim.ui.input = function(opts, on_confirm)
+    opts.default = "" -- Clear the default input
+    original_input(opts, on_confirm)
+  end
+  vim.lsp.buf.rename()
 end, { desc = "Rename symbol" })
 
 map("i", "<C-d>", function()
-	require("blink.cmp").hide()
-	local cp = require("supermaven-nvim.completion_preview")
-	if cp.ns_id then
-		vim.api.nvim_buf_clear_namespace(0, cp.ns_id, 0, -1)
-	end
+  require("blink.cmp").hide()
+  local cp = require("supermaven-nvim.completion_preview")
+  if cp.ns_id then
+    vim.api.nvim_buf_clear_namespace(0, cp.ns_id, 0, -1)
+  end
 end, { desc = "Hide Blink and clear Supermaven suggestion" })
 
 -- teriminal mode
 map("t", "<Esc>", [[<C-\><C-n>]], { desc = "Escape terminal mode" })
 vim.api.nvim_create_autocmd({ "TermEnter", "TermLeave" }, {
-	callback = function(ev)
-		local buf = ev.buf
-		if vim.bo[buf].buftype == "terminal" then
-			if ev.event == "TermLeave" then
-				-- entering normal mode
-				vim.wo.number = true
-				vim.wo.relativenumber = true
-			else
-				-- entering insert/terminal mode
-				vim.wo.number = false
-				vim.wo.relativenumber = false
-			end
-		end
-	end,
+  callback = function(ev)
+    local buf = ev.buf
+    if vim.bo[buf].buftype == "terminal" then
+      if ev.event == "TermLeave" then
+        -- entering normal mode
+        vim.wo.number = true
+        vim.wo.relativenumber = true
+      else
+        -- entering insert/terminal mode
+        vim.wo.number = false
+        vim.wo.relativenumber = false
+      end
+    end
+  end,
 })
 
 -- close matching whatever
