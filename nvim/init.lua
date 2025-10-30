@@ -447,9 +447,46 @@ vim.lsp.enable("ts")
 local map = vim.keymap.set
 
 -- reload init.lua
-vim.keymap.set("n", "<leader>i", function()
+map("n", "<leader>i", function()
 	dofile(vim.env.MYVIMRC)
 	print("Reloaded init.lua")
+end)
+
+-- split pane
+map("n", "<C-v>", ":vsplit<CR><C-w>l", { noremap = true, silent = true })
+
+local function has_neighbor(dir)
+	local cur = vim.api.nvim_get_current_win()
+	vim.cmd("wincmd " .. dir) -- try move
+	local moved = (vim.api.nvim_get_current_win() ~= cur)
+	if moved then
+		vim.api.nvim_set_current_win(cur)
+	end
+	return moved
+end
+
+local function smart_resize(toward)
+	local delta = 2
+	if toward == "left" then
+		if has_neighbor("h") then
+			vim.cmd("vertical resize +" .. delta) -- take space from left neighbor
+		elseif has_neighbor("l") then
+			vim.cmd("vertical resize -" .. delta) -- no left neighbor -> give to right
+		end
+	else -- toward == 'right'
+		if has_neighbor("l") then
+			vim.cmd("vertical resize +" .. delta) -- take space from right neighbor
+		elseif has_neighbor("h") then
+			vim.cmd("vertical resize -" .. delta) -- no right neighbor -> give to left
+		end
+	end
+end
+
+map("n", "<C-Left>", function()
+	smart_resize("left")
+end)
+map("n", "<C-Right>", function()
+	smart_resize("right")
 end)
 
 -- oil
@@ -493,6 +530,7 @@ map("n", "<BS>j", ":GitConflictNextConflict", { desc = "Git next conflict" })
 map("n", "<BS>k", ":GitConflictPrevConflict", { desc = "Git previous conflict" })
 map("n", "<BS>o", ":GitConflictChooseOurs", { desc = "Git choose ours" })
 map("n", "<BS>i", ":GitConflictChooseTheirs", { desc = "Git choose incoming" })
+map("n", "<BS>a", ":GitConflictChooseBoth", { desc = "Git choose all" })
 
 -- indent
 map("v", "<", "<gv", { desc = "Indent" })
