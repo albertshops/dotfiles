@@ -103,8 +103,8 @@ alt-shift-equal = 'resize smart +50'
 alt-a = 'workspace a'
 alt-shift-a = ['move-node-to-workspace a', 'workspace a']
 
-alt-g = 'workspace gpt'
-alt-shift-g = ['move-node-to-workspace gpt', 'workspace gpt']
+alt-n = 'workspace gpt'
+alt-shift-n = ['move-node-to-workspace gpt', 'workspace gpt']
 
 alt-c = 'workspace chrome'
 alt-shift-c = ['move-node-to-workspace chrome', 'workspace chrome']

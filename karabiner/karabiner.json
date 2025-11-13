@@ -4,6 +4,24 @@
             "complex_modifications": {
                 "rules": [
                     {
+                        "description": "cmd h",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "h",
+                                    "modifiers": { "mandatory": ["command"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "vk_none",
+                                        "modifiers": []
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "tab",
                         "manipulators": [
                             {
@@ -1005,6 +1023,10 @@
                     "to": [{ "apple_vendor_top_case_key_code": "keyboard_fn" }]
                 },
                 {
+                    "from": { "key_code": "right_option" },
+                    "to": [{ "key_code": "escape" }]
+                },
+                {
                     "from": { "key_code": "s" },
                     "to": [{ "key_code": "o" }]
                 },
@@ -1043,10 +1065,6 @@
                 {
                     "from": { "key_code": "z" },
                     "to": [{ "key_code": "semicolon" }]
-                },
-                {
-                    "from": { "key_code": "right_option" },
-                    "to": [{ "key_code": "escape" }]
                 }
             ],
             "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
