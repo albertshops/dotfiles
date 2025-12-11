@@ -342,7 +342,7 @@ require("lazy").setup({
         end,
       },
       link = {},
-      groupdiff = true,     -- links diffs so that they style together
+      groupdiff = true,        -- links diffs so that they style together
       groupscrollbind = false, -- link scrollbound windows so that they style together.
       enablefocusfading = true,
       checkinterval = 1000,
@@ -473,7 +473,7 @@ local function smart_resize(toward)
     elseif has_neighbor("l") then
       vim.cmd("vertical resize -" .. delta) -- no left neighbor -> give to right
     end
-  else                                   -- toward == 'right'
+  else                                      -- toward == 'right'
     if has_neighbor("l") then
       vim.cmd("vertical resize +" .. delta) -- take space from right neighbor
     elseif has_neighbor("h") then
@@ -504,6 +504,7 @@ end, { desc = "Toggle comment" })
 -- clipboard
 map("n", "<leader>y", '"+y', { desc = "Yank to clipboard" })
 map("v", "<leader>y", '"+y', { desc = "Yank to clipboard" })
+map("n", "<leader>p", '"+p', { desc = "Paste from system clipboard" })
 
 -- telescope
 map("n", "<Tab>t", ":Telescope<CR>", { desc = "Telescope" })
