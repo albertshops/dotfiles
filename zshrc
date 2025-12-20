@@ -52,3 +52,21 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init - zsh)"
+
+# Smart cd: plain `cd` inside tmux goes to the session root
+cd() {
+  # If no args and we're inside tmux, try to jump to the session root
+  if [[ $# -eq 0 && -n "$TMUX" ]]; then
+    # Ask tmux for the current session's @session-root
+    local root
+    root=$(tmux show-option -qv @session-root 2>/dev/null)
+
+    if [[ -n "$root" ]]; then
+      builtin cd "$root"
+      return
+    fi
+  fi
+
+  # Fallback: normal cd behaviour
+  builtin cd "$@"
+}
