@@ -16,6 +16,7 @@ Managed targets from `chezmoi/`:
 - `chezmoi/executable_dot_config/tmux/sessionizer` -> `~/.config/tmux/sessionizer`
 - `chezmoi/dot_config/nvim/init.lua` -> `~/.config/nvim/init.lua`
 - `chezmoi/dot_config/kitty/kitty.conf` -> `~/.config/kitty/kitty.conf`
+- `chezmoi/dot_config/opencode/plugin/notification.ts` -> `~/.config/opencode/plugin/notification.ts`
 - `chezmoi/dot_config/karabiner/karabiner.json` -> `~/.config/karabiner/karabiner.json`
 - `chezmoi/dot_config/karabiner/assets/complex_modifications/*` -> `~/.config/karabiner/assets/complex_modifications/*`
 
