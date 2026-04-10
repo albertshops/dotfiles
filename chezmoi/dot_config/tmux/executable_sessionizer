@@ -5,7 +5,19 @@ PATH=$PATH:/opt/homebrew/bin
 if [[ $# -eq 1 ]]; then
   selected=$1
 else
-  selected=$(find ~ ~/work ~/playground -mindepth 0 -maxdepth 2 -type d | sort | uniq | fzf)
+  if tmux_sessions=$(tmux list-sessions -F '#S' 2>/dev/null); then
+    header_text="$tmux_sessions"
+  else
+    header_text=""
+  fi
+
+  selected=$(find ~ ~/work ~/playground -mindepth 0 -maxdepth 2 -type d | sort | uniq | fzf \
+    --height=80% \
+    --layout=reverse \
+    --border \
+    --margin=10%,20% \
+    --no-info \
+    --header="$header_text")
 fi
 
 if [[ -z "$selected" ]]; then
