@@ -13,7 +13,7 @@ Managed targets from `chezmoi/`:
 - `chezmoi/dot_aerospace.toml` -> `~/.aerospace.toml`
 - `chezmoi/dot_config/lazygit/config.yml` -> `~/.config/lazygit/config.yml`
 - `chezmoi/dot_config/tmux/tmux.conf` -> `~/.config/tmux/tmux.conf`
-- `chezmoi/executable_dot_config/tmux/sessionizer` -> `~/.config/tmux/sessionizer`
+- `chezmoi/dot_config/tmux/executable_sessionizer` -> `~/.config/tmux/sessionizer`
 - `chezmoi/dot_config/nvim/init.lua` -> `~/.config/nvim/init.lua`
 - `chezmoi/dot_config/kitty/kitty.conf` -> `~/.config/kitty/kitty.conf`
 - `chezmoi/dot_config/opencode/plugin/notification.ts` -> `~/.config/opencode/plugin/notification.ts`
@@ -37,3 +37,5 @@ Managed targets from `chezmoi/`:
 ## Notes
 
 - Generated runtime state (tmux resurrect snapshots, Karabiner automatic backups) should stay out of source-managed files.
+- Notification plugin reads `~/.config/opencode/.env` on each notification event.
+- Set `NOTIFY_DELAY_SECONDS` (for example `NOTIFY_DELAY_SECONDS=5`) to delay notifications.

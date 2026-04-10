@@ -97,8 +97,22 @@ export const NotificationPlugin: Plugin = async ({
     telegram: boolean;
     soundFile: string;
     soundVolume: number;
+    delaySeconds: number;
     telegramBotToken?: string;
     telegramChatID?: string;
+  };
+
+  const parseNonNegativeNumber = (value: string | undefined, fallback: number): number => {
+    if (!value) {
+      return fallback;
+    }
+
+    const parsed = Number(value.trim());
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      return fallback;
+    }
+
+    return parsed;
   };
 
   const loadNotificationConfig = async (): Promise<NotificationConfig> => {
@@ -108,6 +122,7 @@ export const NotificationPlugin: Plugin = async ({
       telegram: false,
       soundFile: "/System/Library/Sounds/Purr.aiff",
       soundVolume: 1,
+      delaySeconds: 0,
     };
 
     if (!envPath) {
@@ -124,6 +139,7 @@ export const NotificationPlugin: Plugin = async ({
         telegram: parseBoolean(env.get("NOTIFY_TELEGRAM"), defaults.telegram),
         soundFile: env.get("NOTIFY_SOUND_FILE") || defaults.soundFile,
         soundVolume: parseNumber(env.get("NOTIFY_SOUND_VOLUME"), defaults.soundVolume),
+        delaySeconds: parseNonNegativeNumber(env.get("NOTIFY_DELAY_SECONDS"), defaults.delaySeconds),
         telegramBotToken: env.get("TELEGRAM_BOT_TOKEN"),
         telegramChatID: env.get("TELEGRAM_CHAT_ID"),
       };
@@ -158,8 +174,16 @@ export const NotificationPlugin: Plugin = async ({
     }
   };
 
+  const sleep = async (ms: number): Promise<void> => {
+    await new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
   const notify = async (message: string): Promise<void> => {
     const config = await loadNotificationConfig();
+
+    if (config.delaySeconds > 0) {
+      await sleep(config.delaySeconds * 1000);
+    }
 
     if (config.desktop) {
       try {
