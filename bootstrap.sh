@@ -11,14 +11,22 @@ fi
 
 if [[ -f "$SCRIPT_DIR/Brewfile" ]]; then
   if ! brew bundle --file "$SCRIPT_DIR/Brewfile"; then
-    echo "brew bundle did not fully complete. Continuing with chezmoi apply."
+    echo "brew bundle did not fully complete. Continuing with stow setup."
   fi
 fi
 
-if ! command -v chezmoi >/dev/null 2>&1; then
-  brew install chezmoi
+if ! command -v stow >/dev/null 2>&1; then
+  brew install stow
 fi
 
-chezmoi -S "$SCRIPT_DIR/chezmoi" apply --force
+if [[ ! -d "$SCRIPT_DIR/stow" ]]; then
+  echo "stow directory not found at $SCRIPT_DIR/stow"
+  exit 1
+fi
+
+(
+  cd "$SCRIPT_DIR/stow"
+  stow --target "$HOME" --restow */
+)
 
 echo "Bootstrap complete."

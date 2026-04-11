@@ -1,6 +1,6 @@
 tap "nikitabobko/tap"
 
-brew "chezmoi"
+brew "stow"
 brew "fzf"
 brew "lazygit"
 brew "neovim"

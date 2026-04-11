@@ -12,6 +12,10 @@ if which nvm >/dev/null 2>&1; then
     [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 fi
 
+export PKG_CONFIG_PATH="/opt/homebrew/opt/opencv/lib/pkgconfig:$PKG_CONFIG_PATH"
+export CGO_CFLAGS="-I/opt/homebrew/opt/opencv/include"
+export CGO_LDFLAGS="-L/opt/homebrew/opt/opencv/lib"
+
 
 
 # aliases

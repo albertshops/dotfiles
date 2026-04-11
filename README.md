@@ -1,41 +1,42 @@
 # dotfiles
 
-This repo now uses [chezmoi](https://www.chezmoi.io/) for sharing config between machines.
+This repo uses [GNU Stow](https://www.gnu.org/software/stow/) for symlink-based dotfile management.
 
 ## Layout
 
-- `chezmoi/` is the source-of-truth for managed files.
-- All tracked config lives under `chezmoi/`.
+- `stow/` is the source-of-truth for managed files.
+- Each subdirectory under `stow/` is a package (for example `shell`, `nvim`, `tmux`).
 
-Managed targets from `chezmoi/`:
+Managed targets from `stow/`:
 
-- `chezmoi/dot_zshrc` -> `~/.zshrc`
-- `chezmoi/dot_aerospace.toml` -> `~/.aerospace.toml`
-- `chezmoi/dot_config/lazygit/config.yml` -> `~/.config/lazygit/config.yml`
-- `chezmoi/dot_config/tmux/tmux.conf` -> `~/.config/tmux/tmux.conf`
-- `chezmoi/dot_config/tmux/executable_sessionizer` -> `~/.config/tmux/sessionizer`
-- `chezmoi/dot_config/nvim/init.lua` -> `~/.config/nvim/init.lua`
-- `chezmoi/dot_config/kitty/kitty.conf` -> `~/.config/kitty/kitty.conf`
-- `chezmoi/dot_config/opencode/plugin/notification.ts` -> `~/.config/opencode/plugin/notification.ts`
-- `chezmoi/dot_config/karabiner/karabiner.json` -> `~/.config/karabiner/karabiner.json`
-- `chezmoi/dot_config/karabiner/assets/complex_modifications/*` -> `~/.config/karabiner/assets/complex_modifications/*`
+- `stow/shell/.zshrc` -> `~/.zshrc`
+- `stow/aerospace/.aerospace.toml` -> `~/.aerospace.toml`
+- `stow/lazygit/.config/lazygit/config.yml` -> `~/.config/lazygit/config.yml`
+- `stow/tmux/.config/tmux/tmux.conf` -> `~/.config/tmux/tmux.conf`
+- `stow/tmux/.config/tmux/sessionizer` -> `~/.config/tmux/sessionizer`
+- `stow/nvim/.config/nvim/init.lua` -> `~/.config/nvim/init.lua`
+- `stow/kitty/.config/kitty/kitty.conf` -> `~/.config/kitty/kitty.conf`
+- `stow/opencode/.config/opencode/plugins/notification.ts` -> `~/.config/opencode/plugins/notification.ts`
+- `stow/karabiner/.config/karabiner/karabiner.json` -> `~/.config/karabiner/karabiner.json`
+- `stow/karabiner/.config/karabiner/assets/complex_modifications/*` -> `~/.config/karabiner/assets/complex_modifications/*`
 
 ## First-time setup on a machine
 
 1. Run `./bootstrap.sh`.
 2. If you want to run commands manually instead, use:
    - `brew bundle --file ./Brewfile`
-   - `chezmoi -S "$PWD/chezmoi" apply --force`
+   - `cd ./stow && stow --target "$HOME" --restow */`
 
 ## Daily workflow
 
-- Edit a file: `chezmoi edit ~/.zshrc`
-- See pending changes: `chezmoi -S "$PWD/chezmoi" diff`
-- Apply changes: `chezmoi -S "$PWD/chezmoi" apply --force`
-- Re-sync from source directory: `chezmoi -S "$PWD/chezmoi" re-add`
+- See what would change: `cd stow && stow --simulate --target "$HOME" <package>`
+- Apply a package: `cd stow && stow --target "$HOME" <package>`
+- Re-apply after edits: `cd stow && stow --restow --target "$HOME" <package>`
+- Remove symlinks for a package: `cd stow && stow --delete --target "$HOME" <package>`
 
 ## Notes
 
+- If Stow reports conflicts, move or remove the existing file in `$HOME` and run Stow again.
 - Generated runtime state (tmux resurrect snapshots, Karabiner automatic backups) should stay out of source-managed files.
 - Notification plugin reads `~/.config/opencode/.env` on each notification event.
 - Set `NOTIFY_DELAY_SECONDS` (for example `NOTIFY_DELAY_SECONDS=5`) to delay notifications.
