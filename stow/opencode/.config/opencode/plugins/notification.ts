@@ -1,5 +1,6 @@
 import type { Plugin } from "@opencode-ai/plugin";
 import { readFile } from "node:fs/promises";
+import { basename } from "node:path";
 
 export const NotificationPlugin: Plugin = async ({
   project,
@@ -12,6 +13,7 @@ export const NotificationPlugin: Plugin = async ({
   const handledPermissionRequests = new Set<string>();
   const handledQuestionRequests = new Set<string>();
   const envPath = process.env.HOME ? `${process.env.HOME}/.config/opencode/.env` : undefined;
+  const sessionFolder = basename(worktree || directory || "") || "unknown";
 
   const trackSessionMode = (sessionID: string, mode: string): void => {
     if (mode === "build" || mode === "plan") {
@@ -180,6 +182,7 @@ export const NotificationPlugin: Plugin = async ({
 
   const notify = async (message: string): Promise<void> => {
     const config = await loadNotificationConfig();
+    const formattedMessage = `[${sessionFolder}] ${message}`;
 
     if (config.delaySeconds > 0) {
       await sleep(config.delaySeconds * 1000);
@@ -187,7 +190,7 @@ export const NotificationPlugin: Plugin = async ({
 
     if (config.desktop) {
       try {
-        await showNotification(message);
+        await showNotification(formattedMessage);
       } catch {
       }
     }
@@ -201,7 +204,7 @@ export const NotificationPlugin: Plugin = async ({
 
     if (config.telegram && config.telegramBotToken && config.telegramChatID) {
       try {
-        await sendTelegramText(message, config.telegramBotToken, config.telegramChatID);
+        await sendTelegramText(formattedMessage, config.telegramBotToken, config.telegramChatID);
       } catch {
       }
     }

@@ -1,0 +1,246 @@
+#!/usr/bin/env node
+
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
+const readline = require("readline");
+
+const TOGGLES = [
+  { key: "NOTIFY_SOUND", label: "sound" },
+  { key: "NOTIFY_DESKTOP", label: "desktop" },
+  { key: "NOTIFY_TELEGRAM", label: "telegram" },
+];
+
+const TARGET_KEYS = TOGGLES.map((toggle) => toggle.key);
+
+function parseArgs(argv) {
+  let envPath = path.join(os.homedir(), ".config", "opencode", ".env");
+
+  for (let i = 2; i < argv.length; i += 1) {
+    const arg = argv[i];
+
+    if (arg === "--help" || arg === "-h") {
+      printHelp();
+      process.exit(0);
+    }
+
+    if (arg === "--env") {
+      const next = argv[i + 1];
+      if (!next) {
+        exitWithError("Missing value for --env");
+      }
+      envPath = next;
+      i += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--env=")) {
+      envPath = arg.slice("--env=".length);
+      continue;
+    }
+
+    exitWithError(`Unknown argument: ${arg}`);
+  }
+
+  return { envPath: path.resolve(envPath) };
+}
+
+function printHelp() {
+  const help = [
+    "Usage: notify-tui [--env <path>]",
+    "",
+    "Minimal TUI for toggling notification flags in .env:",
+    "  - NOTIFY_DESKTOP",
+    "  - NOTIFY_SOUND",
+    "  - NOTIFY_TELEGRAM",
+    "",
+    "Keys:",
+    "  j/k: move",
+    "  Space: toggle selected item",
+    "  Enter: save",
+    "  q: quit without saving",
+  ];
+
+  process.stdout.write(`${help.join("\n")}\n`);
+}
+
+function exitWithError(message) {
+  process.stderr.write(`Error: ${message}\n`);
+  process.exit(1);
+}
+
+function readEnvFile(envPath) {
+  let raw;
+  try {
+    raw = fs.readFileSync(envPath, "utf8");
+  } catch (err) {
+    exitWithError(`Unable to read ${envPath}: ${err.message}`);
+  }
+
+  const lines = raw.split(/\r?\n/);
+  const values = {};
+
+  for (const key of TARGET_KEYS) {
+    values[key] = false;
+  }
+
+  for (const line of lines) {
+    const match = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
+    if (!match) {
+      continue;
+    }
+
+    const key = match[1];
+    const value = match[2];
+
+    if (Object.prototype.hasOwnProperty.call(values, key)) {
+      values[key] = value.trim() === "1";
+    }
+  }
+
+  const hasTrailingNewline = /\r?\n$/.test(raw);
+  const eol = raw.includes("\r\n") ? "\r\n" : "\n";
+
+  return { lines, values, hasTrailingNewline, eol };
+}
+
+function writeEnvFile(envPath, parsed) {
+  const updated = parsed.lines.slice();
+  const seen = new Set();
+
+  for (let i = 0; i < updated.length; i += 1) {
+    const line = updated[i];
+    const match = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
+    if (!match) {
+      continue;
+    }
+
+    const key = match[1];
+    if (!TARGET_KEYS.includes(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    updated[i] = `${key}=${parsed.values[key] ? "1" : "0"}`;
+  }
+
+  for (const key of TARGET_KEYS) {
+    if (!seen.has(key)) {
+      updated.push(`${key}=${parsed.values[key] ? "1" : "0"}`);
+    }
+  }
+
+  let output = updated.join(parsed.eol);
+  if (parsed.hasTrailingNewline) {
+    output += parsed.eol;
+  }
+
+  try {
+    fs.writeFileSync(envPath, output, "utf8");
+  } catch (err) {
+    exitWithError(`Unable to write ${envPath}: ${err.message}`);
+  }
+}
+
+function clearScreen() {
+  process.stdout.write("\x1b[2J\x1b[H");
+}
+
+function draw(state) {
+  clearScreen();
+
+  const title = `notify-tui (${state.envPath})`;
+  process.stdout.write(`${title}\n\n`);
+
+  for (let i = 0; i < TOGGLES.length; i += 1) {
+    const toggle = TOGGLES[i];
+    const key = toggle.key;
+    const checked = state.values[key] ? "x" : " ";
+    const cursor = state.selected === i ? ">" : " ";
+    process.stdout.write(`${cursor} [${checked}] ${toggle.label}\n`);
+  }
+
+  process.stdout.write("\nj/k move | Space toggle | Enter save | q quit\n");
+}
+
+function startTui(envPath, parsed) {
+  if (!process.stdin.isTTY || !process.stdout.isTTY) {
+    exitWithError("This command requires an interactive terminal (TTY).");
+  }
+
+  const state = {
+    envPath,
+    selected: 0,
+    values: { ...parsed.values },
+  };
+
+  readline.emitKeypressEvents(process.stdin);
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+
+  const cleanup = () => {
+    process.stdin.setRawMode(false);
+    process.stdin.pause();
+    process.stdout.write("\n");
+  };
+
+  const quit = (code = 0) => {
+    cleanup();
+    process.exit(code);
+  };
+
+  process.on("SIGINT", () => {
+    quit(130);
+  });
+
+  draw(state);
+
+  process.stdin.on("keypress", (_str, key) => {
+    if (!key) {
+      return;
+    }
+
+    if (key.name === "k") {
+      state.selected = (state.selected - 1 + TARGET_KEYS.length) % TARGET_KEYS.length;
+      draw(state);
+      return;
+    }
+
+    if (key.name === "j") {
+      state.selected = (state.selected + 1) % TARGET_KEYS.length;
+      draw(state);
+      return;
+    }
+
+    if (key.name === "space") {
+      const activeKey = TARGET_KEYS[state.selected];
+      state.values[activeKey] = !state.values[activeKey];
+      draw(state);
+      return;
+    }
+
+    if (key.name === "return" || key.name === "enter") {
+      parsed.values = { ...state.values };
+      writeEnvFile(envPath, parsed);
+      process.stdout.write("Saved.\n");
+      quit(0);
+    }
+
+    if (key.name === "q") {
+      quit(0);
+      return;
+    }
+
+    if (key.ctrl && key.name === "c") {
+      quit(130);
+    }
+  });
+}
+
+function main() {
+  const { envPath } = parseArgs(process.argv);
+  const parsed = readEnvFile(envPath);
+  startTui(envPath, parsed);
+}
+
+main();

@@ -36,6 +36,7 @@ export PATH="$PATH:$HOME/.local/bin"
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/.config/opencode:$PATH"
 
 # pnpm
 if which pnpm >/dev/null 2>&1; then
