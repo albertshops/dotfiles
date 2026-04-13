@@ -1,246 +1,265 @@
-#!/usr/bin/env node
+#!/usr/bin/env bash
 
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
-const readline = require("readline");
+set -u
 
-const TOGGLES = [
-  { key: "NOTIFY_SOUND", label: "sound" },
-  { key: "NOTIFY_DESKTOP", label: "desktop" },
-  { key: "NOTIFY_TELEGRAM", label: "telegram" },
-];
+PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+export PATH
 
-const TARGET_KEYS = TOGGLES.map((toggle) => toggle.key);
+TOGGLE_KEYS=(
+  "NOTIFY_SOUND"
+  "NOTIFY_DESKTOP"
+  "NOTIFY_TELEGRAM"
+)
 
-function parseArgs(argv) {
-  let envPath = path.join(os.homedir(), ".config", "opencode", ".env");
+TOGGLE_LABELS=(
+  "sound"
+  "desktop"
+  "telegram"
+)
 
-  for (let i = 2; i < argv.length; i += 1) {
-    const arg = argv[i];
+toggle_values=(0 0 0)
+desired_values=(0 0 0)
+env_lines=()
 
-    if (arg === "--help" || arg === "-h") {
-      printHelp();
-      process.exit(0);
-    }
-
-    if (arg === "--env") {
-      const next = argv[i + 1];
-      if (!next) {
-        exitWithError("Missing value for --env");
-      }
-      envPath = next;
-      i += 1;
-      continue;
-    }
-
-    if (arg.startsWith("--env=")) {
-      envPath = arg.slice("--env=".length);
-      continue;
-    }
-
-    exitWithError(`Unknown argument: ${arg}`);
-  }
-
-  return { envPath: path.resolve(envPath) };
+exit_with_error() {
+  printf 'Error: %s\n' "$1" >&2
+  exit 1
 }
 
-function printHelp() {
-  const help = [
-    "Usage: notify-tui [--env <path>]",
-    "",
-    "Minimal TUI for toggling notification flags in .env:",
-    "  - NOTIFY_DESKTOP",
-    "  - NOTIFY_SOUND",
-    "  - NOTIFY_TELEGRAM",
-    "",
-    "Keys:",
-    "  j/k: move",
-    "  Space: toggle selected item",
-    "  Enter: save",
-    "  q: quit without saving",
-  ];
+print_help() {
+  cat <<'EOF'
+Usage: notify-tui [--env <path>]
 
-  process.stdout.write(`${help.join("\n")}\n`);
+Minimal TUI for toggling notification flags in .env:
+  - NOTIFY_DESKTOP
+  - NOTIFY_SOUND
+  - NOTIFY_TELEGRAM
+
+Keys:
+  j/k: move
+  Space: toggle selected item
+  Enter: save
+  Esc/q: quit without saving
+EOF
 }
 
-function exitWithError(message) {
-  process.stderr.write(`Error: ${message}\n`);
-  process.exit(1);
+resolve_path() {
+  case "$1" in
+    /*) printf '%s\n' "$1" ;;
+    *) printf '%s/%s\n' "$PWD" "$1" ;;
+  esac
 }
 
-function readEnvFile(envPath) {
-  let raw;
-  try {
-    raw = fs.readFileSync(envPath, "utf8");
-  } catch (err) {
-    exitWithError(`Unable to read ${envPath}: ${err.message}`);
-  }
-
-  const lines = raw.split(/\r?\n/);
-  const values = {};
-
-  for (const key of TARGET_KEYS) {
-    values[key] = false;
-  }
-
-  for (const line of lines) {
-    const match = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
-    if (!match) {
-      continue;
-    }
-
-    const key = match[1];
-    const value = match[2];
-
-    if (Object.prototype.hasOwnProperty.call(values, key)) {
-      values[key] = value.trim() === "1";
-    }
-  }
-
-  const hasTrailingNewline = /\r?\n$/.test(raw);
-  const eol = raw.includes("\r\n") ? "\r\n" : "\n";
-
-  return { lines, values, hasTrailingNewline, eol };
+index_for_key() {
+  local query="$1"
+  local i
+  for ((i = 0; i < ${#TOGGLE_KEYS[@]}; i += 1)); do
+    if [[ "${TOGGLE_KEYS[$i]}" == "$query" ]]; then
+      printf '%s' "$i"
+      return 0
+    fi
+  done
+  return 1
 }
 
-function writeEnvFile(envPath, parsed) {
-  const updated = parsed.lines.slice();
-  const seen = new Set();
-
-  for (let i = 0; i < updated.length; i += 1) {
-    const line = updated[i];
-    const match = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
-    if (!match) {
-      continue;
-    }
-
-    const key = match[1];
-    if (!TARGET_KEYS.includes(key)) {
-      continue;
-    }
-
-    seen.add(key);
-    updated[i] = `${key}=${parsed.values[key] ? "1" : "0"}`;
-  }
-
-  for (const key of TARGET_KEYS) {
-    if (!seen.has(key)) {
-      updated.push(`${key}=${parsed.values[key] ? "1" : "0"}`);
-    }
-  }
-
-  let output = updated.join(parsed.eol);
-  if (parsed.hasTrailingNewline) {
-    output += parsed.eol;
-  }
-
-  try {
-    fs.writeFileSync(envPath, output, "utf8");
-  } catch (err) {
-    exitWithError(`Unable to write ${envPath}: ${err.message}`);
-  }
+index_for_label() {
+  local query="$1"
+  local i
+  for ((i = 0; i < ${#TOGGLE_LABELS[@]}; i += 1)); do
+    if [[ "${TOGGLE_LABELS[$i]}" == "$query" ]]; then
+      printf '%s' "$i"
+      return 0
+    fi
+  done
+  return 1
 }
 
-function clearScreen() {
-  process.stdout.write("\x1b[2J\x1b[H");
+parse_args() {
+  local user_home="${HOME:-}"
+  if [[ -z "$user_home" ]]; then
+    exit_with_error "HOME is not set; pass --env <path>"
+  fi
+
+  env_path="$user_home/.config/opencode/.env"
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -h|--help)
+        print_help
+        exit 0
+        ;;
+      --env)
+        if [[ $# -lt 2 ]]; then
+          exit_with_error "Missing value for --env"
+        fi
+        env_path="$2"
+        shift 2
+        ;;
+      --env=*)
+        env_path="${1#--env=}"
+        shift
+        ;;
+      *)
+        exit_with_error "Unknown argument: $1"
+        ;;
+    esac
+  done
+
+  env_path="$(resolve_path "$env_path")"
 }
 
-function draw(state) {
-  clearScreen();
+read_env_file() {
+  [[ -f "$env_path" ]] || exit_with_error "Unable to read $env_path: file does not exist"
 
-  const title = `notify-tui (${state.envPath})`;
-  process.stdout.write(`${title}\n\n`);
+  env_lines=()
+  local line
+  line=""
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    env_lines+=("$line")
+  done < "$env_path"
 
-  for (let i = 0; i < TOGGLES.length; i += 1) {
-    const toggle = TOGGLES[i];
-    const key = toggle.key;
-    const checked = state.values[key] ? "x" : " ";
-    const cursor = state.selected === i ? ">" : " ";
-    process.stdout.write(`${cursor} [${checked}] ${toggle.label}\n`);
-  }
+  local i
+  for ((i = 0; i < ${#TOGGLE_KEYS[@]}; i += 1)); do
+    toggle_values[$i]=0
+  done
 
-  process.stdout.write("\nj/k move | Space toggle | Enter save | q quit\n");
+  local key value idx
+  for line in "${env_lines[@]}"; do
+    if [[ "$line" =~ ^([A-Za-z_][A-Za-z0-9_]*)=(.*)$ ]]; then
+      key="${BASH_REMATCH[1]}"
+      value="${BASH_REMATCH[2]}"
+      if idx="$(index_for_key "$key")"; then
+        if [[ "${value//[[:space:]]/}" == "1" ]]; then
+          toggle_values[$idx]=1
+        fi
+      fi
+    fi
+  done
 }
 
-function startTui(envPath, parsed) {
-  if (!process.stdin.isTTY || !process.stdout.isTTY) {
-    exitWithError("This command requires an interactive terminal (TTY).");
-  }
+build_start_bind() {
+  local bind_sequence=""
+  local current_index=1
+  local i key
 
-  const state = {
-    envPath,
-    selected: 0,
-    values: { ...parsed.values },
-  };
+  for i in "${!TOGGLE_KEYS[@]}"; do
+    if [[ "${toggle_values[$i]}" != "1" ]]; then
+      continue
+    fi
 
-  readline.emitKeypressEvents(process.stdin);
-  process.stdin.setRawMode(true);
-  process.stdin.resume();
+    local target_index=$((i + 1))
+    while [[ $current_index -lt $target_index ]]; do
+      if [[ -n "$bind_sequence" ]]; then
+        bind_sequence+="+"
+      fi
+      bind_sequence+="down"
+      current_index=$((current_index + 1))
+    done
 
-  const cleanup = () => {
-    process.stdin.setRawMode(false);
-    process.stdin.pause();
-    process.stdout.write("\n");
-  };
+    if [[ -n "$bind_sequence" ]]; then
+      bind_sequence+="+"
+    fi
+    bind_sequence+="toggle"
+  done
 
-  const quit = (code = 0) => {
-    cleanup();
-    process.exit(code);
-  };
+  while [[ $current_index -gt 1 ]]; do
+    if [[ -n "$bind_sequence" ]]; then
+      bind_sequence+="+"
+    fi
+    bind_sequence+="up"
+    current_index=$((current_index - 1))
+  done
 
-  process.on("SIGINT", () => {
-    quit(130);
-  });
-
-  draw(state);
-
-  process.stdin.on("keypress", (_str, key) => {
-    if (!key) {
-      return;
-    }
-
-    if (key.name === "k") {
-      state.selected = (state.selected - 1 + TARGET_KEYS.length) % TARGET_KEYS.length;
-      draw(state);
-      return;
-    }
-
-    if (key.name === "j") {
-      state.selected = (state.selected + 1) % TARGET_KEYS.length;
-      draw(state);
-      return;
-    }
-
-    if (key.name === "space") {
-      const activeKey = TARGET_KEYS[state.selected];
-      state.values[activeKey] = !state.values[activeKey];
-      draw(state);
-      return;
-    }
-
-    if (key.name === "return" || key.name === "enter") {
-      parsed.values = { ...state.values };
-      writeEnvFile(envPath, parsed);
-      process.stdout.write("Saved.\n");
-      quit(0);
-    }
-
-    if (key.name === "q") {
-      quit(0);
-      return;
-    }
-
-    if (key.ctrl && key.name === "c") {
-      quit(130);
-    }
-  });
+  if [[ -n "$bind_sequence" ]]; then
+    start_bind="start:$bind_sequence"
+  else
+    start_bind=""
+  fi
 }
 
-function main() {
-  const { envPath } = parseArgs(process.argv);
-  const parsed = readEnvFile(envPath);
-  startTui(envPath, parsed);
+run_picker() {
+  [[ -t 0 && -t 1 ]] || exit_with_error "This command requires an interactive terminal (TTY)."
+
+  command -v fzf >/dev/null 2>&1 || exit_with_error "fzf is required but was not found in PATH"
+
+  build_start_bind
+
+  local bind_arg="q:abort"
+  if [[ -n "$start_bind" ]]; then
+    bind_arg+=",$start_bind"
+  fi
+
+  selected_labels="$(printf '%s\n' "${TOGGLE_LABELS[@]}" | fzf \
+    --multi \
+    --height=80% \
+    --layout=reverse \
+    --border \
+    --margin=10%,20% \
+    --no-info \
+    --header="notify-tui ($env_path)" \
+    --prompt="notify> " \
+    --bind "$bind_arg")" || exit 0
 }
 
-main();
+set_desired_values() {
+  local i
+
+  for ((i = 0; i < ${#TOGGLE_KEYS[@]}; i += 1)); do
+    desired_values[$i]=0
+  done
+
+  local label idx
+  while IFS= read -r label; do
+    [[ -n "$label" ]] || continue
+    if idx="$(index_for_label "$label")"; then
+      desired_values[$idx]=1
+    fi
+  done <<< "$selected_labels"
+}
+
+write_env_file() {
+  local updated_lines=()
+  local seen=(0 0 0)
+  local line key matched idx i
+
+  for line in "${env_lines[@]}"; do
+    matched=0
+    if [[ "$line" =~ ^([A-Za-z_][A-Za-z0-9_]*)=(.*)$ ]]; then
+      key="${BASH_REMATCH[1]}"
+      if idx="$(index_for_key "$key")"; then
+        updated_lines+=("$key=${desired_values[$idx]}")
+        seen[$idx]=1
+        matched=1
+      fi
+    fi
+
+    if [[ $matched -eq 0 ]]; then
+      updated_lines+=("$line")
+    fi
+  done
+
+  for ((i = 0; i < ${#TOGGLE_KEYS[@]}; i += 1)); do
+    if [[ "${seen[$i]}" -eq 0 ]]; then
+      updated_lines+=("${TOGGLE_KEYS[$i]}=${desired_values[$i]}")
+    fi
+  done
+
+  local tmp_file
+  tmp_file="$(mktemp "${TMPDIR:-/tmp}/notify-tui.XXXXXX")"
+  trap 'rm -f "$tmp_file"' EXIT
+
+  printf '%s\n' "${updated_lines[@]}" > "$tmp_file"
+  mv "$tmp_file" "$env_path"
+  trap - EXIT
+}
+
+main() {
+  parse_args "$@"
+  read_env_file
+  run_picker
+  set_desired_values
+  write_env_file
+  printf 'Saved.\n'
+}
+
+main "$@"
