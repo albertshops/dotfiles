@@ -2,6 +2,8 @@
 
 PATH=$PATH:/opt/homebrew/bin
 
+trap 'exit 0' INT
+
 if [[ $# -eq 1 ]]; then
   selected=$1
 else
@@ -17,7 +19,7 @@ else
     --border \
     --margin=10%,20% \
     --no-info \
-    --header="$header_text")
+    --header="$header_text") || exit 0
 fi
 
 if [[ -z "$selected" ]]; then
