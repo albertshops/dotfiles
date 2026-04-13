@@ -10,6 +10,7 @@ export const NotificationPlugin: Plugin = async ({
   worktree,
 }) => {
   const lastModeBySession = new Map<string, "build" | "plan">();
+  const lastPromptBySession = new Map<string, string>();
   const handledPermissionRequests = new Set<string>();
   const handledQuestionRequests = new Set<string>();
   const envPath = process.env.HOME ? `${process.env.HOME}/.config/opencode/.env` : undefined;
@@ -19,6 +20,33 @@ export const NotificationPlugin: Plugin = async ({
     if (mode === "build" || mode === "plan") {
       lastModeBySession.set(sessionID, mode);
     }
+  };
+
+  const normalizePrompt = (value: string): string => {
+    const compact = value.replace(/\s+/g, " ").trim();
+    if (compact.length <= 120) {
+      return compact;
+    }
+
+    return `${compact.slice(0, 117)}...`;
+  };
+
+  const trackSessionPrompt = (sessionID: string, mode: string, prompt: string | undefined): void => {
+    if (mode !== "build" && mode !== "plan") {
+      return;
+    }
+
+    const normalized = normalizePrompt(prompt || "");
+    if (!normalized) {
+      return;
+    }
+
+    lastPromptBySession.set(sessionID, normalized);
+  };
+
+  const clearSessionTracking = (sessionID: string): void => {
+    lastModeBySession.delete(sessionID);
+    lastPromptBySession.delete(sessionID);
   };
 
   const escapeAppleScriptString = (value: string): string => {
@@ -214,6 +242,7 @@ export const NotificationPlugin: Plugin = async ({
     event: async ({ event }) => {
       if (event.type === "command.executed") {
         trackSessionMode(event.properties.sessionID, event.properties.name);
+        trackSessionPrompt(event.properties.sessionID, event.properties.name, event.properties.arguments);
         return;
       }
 
@@ -227,17 +256,18 @@ export const NotificationPlugin: Plugin = async ({
 
       if (event.type === "session.idle") {
         const mode = lastModeBySession.get(event.properties.sessionID);
+        const prompt = lastPromptBySession.get(event.properties.sessionID);
         if (!mode) {
           return;
         }
 
-        lastModeBySession.delete(event.properties.sessionID);
+        clearSessionTracking(event.properties.sessionID);
         if (mode === "build") {
-          await notify("Build finished");
+          await notify(prompt ? `Build finished: ${prompt}` : "Build finished");
           return;
         }
 
-        await notify("Plan finished");
+        await notify(prompt ? `Plan finished: ${prompt}` : "Plan finished");
         return;
       }
 
@@ -272,6 +302,9 @@ export const NotificationPlugin: Plugin = async ({
       }
 
       if (event.type === "session.error") {
+        if (event.properties.sessionID) {
+          clearSessionTracking(event.properties.sessionID);
+        }
         await notify("Session error");
       }
     },
