@@ -97,7 +97,10 @@ require("lazy").setup({
       appearance = {
         nerd_font_variant = "mono",
       },
-      completion = { preselect = true, documentation = { auto_show = true } },
+      completion = {
+        list = { selection = { preselect = true } },
+        documentation = { auto_show = true },
+      },
       sources = {
         default = { "lsp", "path", "snippets", "buffer" },
       },
