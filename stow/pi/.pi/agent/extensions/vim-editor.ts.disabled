@@ -1,0 +1,455 @@
+/**
+ * Vim-style modal editor for pi's prompt.
+ *
+ * Auto-loaded from ~/.pi/agent/extensions/. Run /reload in pi after editing.
+ *
+ * Insert mode:
+ *   - type normally
+ *   - Enter: insert newline
+ *   - Esc/Ctrl+C: switch to normal mode
+ *
+ * Normal mode:
+ *   - h/j/k/l: move cursor
+ *   - w/b: move by word
+ *   - 0/$: line start/end
+ *   - x: delete char under cursor
+ *   - i: insert before cursor
+ *   - a: insert after cursor
+ *   - A: insert at end of line
+ *   - o/O: open line below/above and enter insert mode
+ *   - v: visual mode
+ *   - p: paste last visual yank/delete
+ *   - dd: delete current line
+ *   - Enter: submit prompt
+ *   - Esc: pass through to pi, e.g. abort/cancel
+ *
+ * Visual mode:
+ *   - h/j/k/l, w/b, 0/$: extend selection
+ *   - y: yank selection
+ *   - d/x: delete selection
+ *   - Esc/Ctrl+C: return to normal mode
+ */
+
+import { CustomEditor, type ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { CURSOR_MARKER, matchesKey, truncateToWidth, visibleWidth, wordWrapLine } from "@mariozechner/pi-tui";
+
+type Mode = "insert" | "normal" | "visual";
+
+type Position = { line: number; col: number };
+
+type Tui = ConstructorParameters<typeof CustomEditor>[0];
+type Theme = ConstructorParameters<typeof CustomEditor>[1];
+type Keybindings = ConstructorParameters<typeof CustomEditor>[2];
+
+class VimPromptEditor extends CustomEditor {
+	private mode: Mode = "insert";
+	private pending = "";
+	private visualAnchor: Position | null = null;
+	private yankBuffer = "";
+
+	constructor(tui: Tui, theme: Theme, keybindings: Keybindings) {
+		super(tui, theme, keybindings);
+	}
+
+	override handleInput(data: string): void {
+		if (matchesKey(data, "escape") || matchesKey(data, "ctrl+c")) {
+			this.pending = "";
+			if (this.mode === "insert") {
+				this.mode = "normal";
+				return;
+			}
+			if (this.mode === "visual") {
+				this.exitVisualMode();
+				return;
+			}
+			// In normal mode, preserve pi's Escape/Ctrl+C behavior: cancel/abort/clear.
+			super.handleInput(data);
+			return;
+		}
+
+		if (this.mode === "visual") {
+			this.handleVisualMode(data);
+			return;
+		}
+
+		if (this.mode === "insert") {
+			if (matchesKey(data, "enter")) {
+				this.newLine();
+				return;
+			}
+			super.handleInput(data);
+			return;
+		}
+
+		// Preserve app/control shortcuts in normal mode.
+		if (this.isControlSequence(data)) {
+			this.pending = "";
+			super.handleInput(data);
+			return;
+		}
+
+		this.handleNormalMode(data);
+	}
+
+	private handleNormalMode(data: string): void {
+		// Ignore multi-byte printable input in normal mode unless pi handles it above.
+		if (data.length !== 1) return;
+
+		if (this.pending === "d") {
+			this.pending = "";
+			if (data === "d") {
+				this.deleteCurrentLine();
+			}
+			return;
+		}
+
+		switch (data) {
+			case "h":
+				this.left();
+				return;
+			case "j":
+				this.down();
+				return;
+			case "k":
+				this.up();
+				return;
+			case "l":
+				this.right();
+				return;
+			case "w":
+				this.wordRight();
+				return;
+			case "b":
+				this.wordLeft();
+				return;
+			case "0":
+				this.lineStart();
+				return;
+			case "$":
+				this.lineEnd();
+				return;
+			case "x":
+				this.deleteForward();
+				return;
+			case "i":
+				this.mode = "insert";
+				return;
+			case "a":
+				this.right();
+				this.mode = "insert";
+				return;
+			case "A":
+				this.lineEnd();
+				this.mode = "insert";
+				return;
+			case "o":
+				this.lineEnd();
+				this.newLine();
+				this.mode = "insert";
+				return;
+			case "O":
+				this.lineStart();
+				this.newLine();
+				this.up();
+				this.mode = "insert";
+				return;
+			case "v":
+				this.enterVisualMode();
+				return;
+			case "p":
+				this.pasteYankBuffer();
+				return;
+			case "d":
+				this.pending = "d";
+				return;
+			default:
+				// Normal mode filters printable chars so accidental typing does not edit.
+				return;
+		}
+	}
+
+	private handleVisualMode(data: string): void {
+		if (matchesKey(data, "enter")) {
+			this.exitVisualMode();
+			return;
+		}
+		if (this.isControlSequence(data)) {
+			super.handleInput(data);
+			return;
+		}
+		if (data.length !== 1) return;
+
+		switch (data) {
+			case "h":
+				this.left();
+				return;
+			case "j":
+				this.down();
+				return;
+			case "k":
+				this.up();
+				return;
+			case "l":
+				this.right();
+				return;
+			case "w":
+				this.wordRight();
+				return;
+			case "b":
+				this.wordLeft();
+				return;
+			case "0":
+				this.lineStart();
+				return;
+			case "$":
+				this.lineEnd();
+				return;
+			case "y":
+				this.yankSelection();
+				return;
+			case "d":
+			case "x":
+				this.deleteSelection();
+				return;
+			case "v":
+				this.exitVisualMode();
+				return;
+			default:
+				return;
+		}
+	}
+
+	override render(width: number): string[] {
+		const lines = super.render(width);
+		if (lines.length === 0) return lines;
+		if (this.mode === "visual") {
+			this.highlightVisualSelection(lines, width);
+		}
+
+		// Ask terminals that support DECSCUSR for a bar cursor in INSERT mode and
+		// a block cursor in NORMAL mode. Some terminals/TUI setups don't show the
+		// hardware cursor here, so in INSERT mode we also turn pi's fake block
+		// cursor into an underline cursor as a visible fallback.
+		const cursorShape = this.mode === "insert" ? "\x1b[6 q" : "\x1b[2 q";
+		lines[0] = cursorShape + lines[0];
+		if (this.mode === "insert") {
+			const marker = CURSOR_MARKER.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+			const fakeCursor = new RegExp(`(${marker})\\x1b\\[7m([\\s\\S]*?)\\x1b\\[0m`);
+			for (let i = 0; i < lines.length; i++) {
+				lines[i] = lines[i]!.replace(fakeCursor, "$1\x1b[4m$2\x1b[24m");
+			}
+		}
+
+		const label = this.mode === "normal" ? " NORMAL " : this.mode === "visual" ? " VISUAL " : " INSERT ";
+		const pending = this.pending ? ` ${this.pending}` : "";
+		const selected = this.mode === "visual" ? ` ${this.getSelectionText().length} chars` : "";
+		const indicator = label + pending + selected;
+		const last = lines.length - 1;
+
+		if (visibleWidth(lines[last]!) >= indicator.length) {
+			lines[last] = truncateToWidth(lines[last]!, Math.max(0, width - indicator.length), "") + indicator;
+		}
+		return lines;
+	}
+
+	private isControlSequence(data: string): boolean {
+		// Printable ASCII should be handled by normal mode. Everything else can go to pi.
+		return !(data.length === 1 && data.charCodeAt(0) >= 32 && data.charCodeAt(0) !== 127);
+	}
+
+	private up(): void { super.handleInput("\x1b[A"); }
+	private down(): void { super.handleInput("\x1b[B"); }
+	private right(): void { super.handleInput("\x1b[C"); }
+	private left(): void { super.handleInput("\x1b[D"); }
+	private lineStart(): void { super.handleInput("\x01"); }
+	private lineEnd(): void { super.handleInput("\x05"); }
+	private deleteForward(): void { super.handleInput("\x1b[3~"); }
+	private wordLeft(): void { super.handleInput("\x1bb"); }
+	private wordRight(): void { super.handleInput("\x1bf"); }
+	private newLine(): void { super.handleInput("\x1b[13;2u"); }
+
+	private enterVisualMode(): void {
+		this.mode = "visual";
+		this.pending = "";
+		this.visualAnchor = this.getCursor();
+	}
+
+	private exitVisualMode(): void {
+		this.mode = "normal";
+		this.pending = "";
+		this.visualAnchor = null;
+	}
+
+	private getSelectionRange(): { start: number; end: number } | null {
+		if (!this.visualAnchor) return null;
+		const cursor = this.getCursor();
+		const anchorOffset = this.positionToOffset(this.visualAnchor);
+		const cursorOffset = this.positionToOffset(cursor);
+		// Characterwise visual selection includes the character under the cursor.
+		const start = Math.min(anchorOffset, cursorOffset);
+		const end = Math.min(this.getText().length, Math.max(anchorOffset, cursorOffset) + 1);
+		return { start, end };
+	}
+
+	private getSelectionText(): string {
+		const range = this.getSelectionRange();
+		if (!range) return "";
+		return this.getText().slice(range.start, range.end);
+	}
+
+	private yankSelection(): void {
+		this.yankBuffer = this.getSelectionText();
+		this.exitVisualMode();
+	}
+
+	private deleteSelection(): void {
+		const range = this.getSelectionRange();
+		if (!range) {
+			this.exitVisualMode();
+			return;
+		}
+		const text = this.getText();
+		this.yankBuffer = text.slice(range.start, range.end);
+		const next = text.slice(0, range.start) + text.slice(range.end);
+		this.setText(next);
+		this.setCursorToOffset(range.start);
+		this.exitVisualMode();
+	}
+
+	private pasteYankBuffer(): void {
+		if (!this.yankBuffer) return;
+		this.insertTextAtCursor(this.yankBuffer);
+	}
+
+	private highlightVisualSelection(renderedLines: string[], width: number): void {
+		const range = this.getSelectionRange();
+		if (!range || range.start === range.end) return;
+
+		const self = this as unknown as {
+			scrollOffset?: number;
+			segment?: (text: string) => Intl.SegmentData[];
+			tui?: { terminal?: { rows?: number } };
+		};
+		const paddingX = this.getPaddingX();
+		const maxPadding = Math.max(0, Math.floor((width - 1) / 2));
+		const padding = Math.min(paddingX, maxPadding);
+		const contentWidth = Math.max(1, width - padding * 2);
+		const layoutWidth = Math.max(1, contentWidth - (padding ? 0 : 1));
+		const visualLines = this.buildVisualSegments(layoutWidth);
+		const terminalRows = self.tui?.terminal?.rows ?? 24;
+		const maxVisibleLines = Math.max(5, Math.floor(terminalRows * 0.3));
+		const scrollOffset = Math.max(0, Math.min(self.scrollOffset ?? 0, Math.max(0, visualLines.length - maxVisibleLines)));
+		const visible = visualLines.slice(scrollOffset, scrollOffset + maxVisibleLines);
+
+		for (let i = 0; i < visible.length; i++) {
+			const segment = visible[i]!;
+			const lineStart = this.positionToOffset({ line: segment.line, col: segment.startCol });
+			const lineEnd = this.positionToOffset({ line: segment.line, col: segment.endCol });
+			const start = Math.max(range.start, lineStart);
+			const end = Math.min(range.end, lineEnd);
+			if (start >= end) continue;
+
+			const highlightStart = padding + (start - lineStart);
+			const highlightEnd = padding + (end - lineStart);
+			const renderedIndex = i + 1; // top border is line 0
+			if (renderedLines[renderedIndex] !== undefined) {
+				renderedLines[renderedIndex] = this.highlightVisibleColumns(renderedLines[renderedIndex]!, highlightStart, highlightEnd);
+			}
+		}
+	}
+
+	private buildVisualSegments(width: number): Array<{ line: number; startCol: number; endCol: number }> {
+		const lines = this.getLines();
+		const self = this as unknown as { segment?: (text: string) => Intl.SegmentData[] };
+		const segments: Array<{ line: number; startCol: number; endCol: number }> = [];
+		for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+			const line = lines[lineIndex] ?? "";
+			if (visibleWidth(line) <= width) {
+				segments.push({ line: lineIndex, startCol: 0, endCol: line.length });
+			} else {
+				const preSegmented = self.segment ? [...self.segment(line)] : undefined;
+				for (const chunk of wordWrapLine(line, width, preSegmented)) {
+					segments.push({ line: lineIndex, startCol: chunk.startIndex, endCol: chunk.endIndex });
+				}
+			}
+		}
+		return segments.length > 0 ? segments : [{ line: 0, startCol: 0, endCol: 0 }];
+	}
+
+	private highlightVisibleColumns(line: string, startCol: number, endCol: number): string {
+		if (startCol >= endCol) return line;
+		let output = "";
+		let col = 0;
+		let highlighted = false;
+		for (let i = 0; i < line.length;) {
+			if (line[i] === "\x1b") {
+				const sgrEnd = line.indexOf("m", i);
+				const apcEnd = line.indexOf("\x07", i);
+				const end = sgrEnd !== -1 && (apcEnd === -1 || sgrEnd < apcEnd) ? sgrEnd : apcEnd;
+				if (end !== -1) {
+					output += line.slice(i, end + 1);
+					i = end + 1;
+					continue;
+				}
+			}
+
+			const char = line[i]!;
+			const width = visibleWidth(char);
+			const shouldHighlight = col >= startCol && col < endCol && width > 0;
+			if (shouldHighlight && !highlighted) {
+				output += "\x1b[48;5;240m";
+				highlighted = true;
+			} else if (!shouldHighlight && highlighted) {
+				output += "\x1b[49m";
+				highlighted = false;
+			}
+			output += char;
+			col += width;
+			i++;
+		}
+		if (highlighted) output += "\x1b[49m";
+		return output;
+	}
+
+	private positionToOffset(pos: Position): number {
+		const lines = this.getLines();
+		let offset = 0;
+		for (let i = 0; i < pos.line; i++) {
+			offset += (lines[i] ?? "").length + 1;
+		}
+		return offset + Math.min(pos.col, (lines[pos.line] ?? "").length);
+	}
+
+	private offsetToPosition(offset: number): Position {
+		const lines = this.getLines();
+		let remaining = Math.max(0, Math.min(offset, this.getText().length));
+		for (let line = 0; line < lines.length; line++) {
+			const length = (lines[line] ?? "").length;
+			if (remaining <= length) return { line, col: remaining };
+			remaining -= length + 1;
+		}
+		const last = Math.max(0, lines.length - 1);
+		return { line: last, col: (lines[last] ?? "").length };
+	}
+
+	private setCursorToOffset(offset: number): void {
+		const pos = this.offsetToPosition(offset);
+		const self = this as unknown as { state: { cursorLine: number; cursorCol: number } };
+		self.state.cursorLine = pos.line;
+		self.state.cursorCol = pos.col;
+	}
+
+	private deleteCurrentLine(): void {
+		this.lineStart();
+		super.handleInput("\x15"); // delete to line start, harmless at line start
+		super.handleInput("\x0b"); // delete to line end
+		this.deleteForward(); // remove newline when possible
+	}
+}
+
+export default function (pi: ExtensionAPI) {
+	pi.on("session_start", (_event, ctx) => {
+		ctx.ui.setEditorComponent((tui, theme, keybindings) => new VimPromptEditor(tui, theme, keybindings));
+		ctx.ui.notify("Vim prompt editor enabled. Press Esc for NORMAL, i for INSERT.", "info");
+	});
+}

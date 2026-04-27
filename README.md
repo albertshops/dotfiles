@@ -17,6 +17,8 @@ Managed targets from `stow/`:
 - `stow/nvim/.config/nvim/init.lua` -> `~/.config/nvim/init.lua`
 - `stow/kitty/.config/kitty/kitty.conf` -> `~/.config/kitty/kitty.conf`
 - `stow/opencode/.config/opencode/plugins/notification.ts` -> `~/.config/opencode/plugins/notification.ts`
+- `stow/pi/.pi/agent/extensions/purr-on-finish.ts` -> `~/.pi/agent/extensions/purr-on-finish.ts`
+- `stow/pi/.pi/agent/extensions/vim-editor.ts.disabled` -> `~/.pi/agent/extensions/vim-editor.ts.disabled`
 - `stow/karabiner/.config/karabiner/karabiner.json` -> `~/.config/karabiner/karabiner.json`
 - `stow/karabiner/.config/karabiner/assets/complex_modifications/*` -> `~/.config/karabiner/assets/complex_modifications/*`
 
