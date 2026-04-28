@@ -26,9 +26,6 @@ alias ls='ls -G'
 alias d='ls -lah'
 alias vim=nvim
 alias dc="docker compose exec app"
-#alias venv='source .venv/bin/activate'
-#alias venv='pyenv activate elysium'
-
 
 export ANDROID_HOME="$HOME/.local/bin"
 
