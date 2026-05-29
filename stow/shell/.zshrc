@@ -3,8 +3,6 @@
 export PROMPT="%F{87}%~%f%F{87} $ %f"
 export RPROMPT=""
 
-export DOCKER_API_VERSION=1.43
-
 # nvm
 if which nvm >/dev/null 2>&1; then
   export NVM_DIR="$HOME/.nvm"
@@ -76,3 +74,6 @@ cd() {
   builtin cd "$@"
 }
 export PATH="/opt/homebrew/opt/postgresql@18/bin:$PATH"
+
+# opencode
+export PATH=/Users/albertshops/.opencode/bin:$PATH
