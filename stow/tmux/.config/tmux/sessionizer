@@ -13,7 +13,13 @@ else
     header_text=""
   fi
 
-  selected=$(find ~ ~/work ~/playground -mindepth 0 -maxdepth 2 -type d | sort | uniq | fzf \
+  roots=(~)
+
+  for dir in ~/work ~/playground ~/projects; do
+    [[ -d "$dir" ]] && roots+=("$dir")
+  done
+
+  selected=$(find "${roots[@]}" -mindepth 0 -maxdepth 2 -type d | sort | uniq | fzf \
     --height=80% \
     --layout=reverse \
     --border \
