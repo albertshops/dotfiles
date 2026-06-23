@@ -30,8 +30,12 @@ export ANDROID_HOME="$HOME/.local/bin"
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+export PATH="/opt/homebrew/opt/postgresql@18/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 export PATH="$HOME/.config/opencode:$PATH"
+
+# Prefer Homebrew toolchain binaries (including Go)
+export PATH="/opt/homebrew/bin:$PATH"
 
 # pnpm
 if which pnpm >/dev/null 2>&1; then
@@ -48,7 +52,6 @@ fi
 
 bindkey '^[[1;5C' forward-word     # Ctrl+right arrow
 bindkey '^[[1;5D' backward-word    # Ctrl+left arrow
-export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # pyenv
@@ -73,7 +76,6 @@ cd() {
   # Fallback: normal cd behaviour
   builtin cd "$@"
 }
-export PATH="/opt/homebrew/opt/postgresql@18/bin:$PATH"
 
 # opencode
 export PATH=/Users/albertshops/.opencode/bin:$PATH
