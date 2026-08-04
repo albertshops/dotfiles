@@ -442,7 +442,7 @@
                                 "to": [
                                     {
                                         "key_code": "comma",
-                                        "modifiers": []
+                                        "modifiers": ["shift"]
                                     }
                                 ],
                                 "type": "basic"
@@ -455,7 +455,7 @@
                                 "to": [
                                     {
                                         "key_code": "period",
-                                        "modifiers": []
+                                        "modifiers": ["shift"]
                                     }
                                 ],
                                 "type": "basic"
