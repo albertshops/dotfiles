@@ -109,18 +109,6 @@ require("lazy").setup({
     opts_extend = { "sources.default" },
   },
 
-  {
-    "supermaven-inc/supermaven-nvim",
-    config = function()
-      require("supermaven-nvim").setup({
-        keymaps = {
-          accept_suggestion = "<C-s>",
-          accept_word = "<C-w>",
-        },
-      })
-    end,
-  },
-
   { "numToStr/Comment.nvim" },
 
   {
@@ -557,27 +545,6 @@ for _, command in ipairs(commands) do
   end)
 end
 
--- toggle supermaven
--- map("i", "<C-a>", function()
--- 	local api = require("supermaven-nvim.api")
--- 	api.toggle()
--- 	require("notify")("Supermaven: " .. tostring(api.is_running()), "info", {
--- 		render = "minimal",
--- 		timeout = 100,
--- 		stages = "fade",
--- 	})
--- 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-d>", true, false, true), "i", false)
--- end, { desc = "Autocomplete Toggle" })
--- map("n", "<C-a>", function()
--- 	local api = require("supermaven-nvim.api")
--- 	api.toggle()
--- 	require("notify")("Supermaven: " .. tostring(api.is_running()), "info", {
--- 		render = "minimal",
--- 		timeout = 100,
--- 		stages = "fade",
--- 	})
--- end, { desc = "Autocomplete Toggle" })
-
 -- LSP
 map("n", "K", ":lua vim.lsp.buf.hover()<CR>", { desc = "Hover" })
 map("n", "<leader>d", ":lua vim.diagnostic.open_float()<CR>", { desc = "Open diagnostics float" })
@@ -595,11 +562,7 @@ end, { desc = "Rename symbol" })
 
 map("i", "<C-d>", function()
   require("blink.cmp").hide()
-  local cp = require("supermaven-nvim.completion_preview")
-  if cp.ns_id then
-    vim.api.nvim_buf_clear_namespace(0, cp.ns_id, 0, -1)
-  end
-end, { desc = "Hide Blink and clear Supermaven suggestion" })
+end, { desc = "Hide Blink completion" })
 
 -- teriminal mode
 map("t", "<Esc>", [[<C-\><C-n>]], { desc = "Escape terminal mode" })
