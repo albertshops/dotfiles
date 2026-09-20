@@ -109,6 +109,33 @@ require("lazy").setup({
     opts_extend = { "sources.default" },
   },
 
+  {
+    "mason-org/mason.nvim",
+    opts = {},
+  },
+
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    dependencies = { "mason-org/mason.nvim" },
+    opts = {
+      ensure_installed = {
+        "lua-language-server",
+        "vtsls",
+        "stylua",
+        "prettierd",
+      },
+      run_on_start = true,
+    },
+    init = function()
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "MasonToolsUpdateCompleted",
+        callback = function()
+          vim.lsp.enable({ "lua", "ts" })
+        end,
+      })
+    end,
+  },
+
   { "numToStr/Comment.nvim" },
 
   {
@@ -133,7 +160,13 @@ require("lazy").setup({
     },
   },
 
-  { "kdheepak/lazygit.nvim" },
+  {
+    dir = vim.fn.expand("~/watch-tower"),
+    name = "watch-tower",
+    config = function()
+      require("watch-tower").setup()
+    end,
+  },
 
   {
     "nvim-lualine/lualine.nvim",
@@ -203,7 +236,6 @@ require("lazy").setup({
 
   {
     "nvim-telescope/telescope.nvim",
-    tag = "0.1.8",
     dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope-file-browser.nvim" },
     config = function()
       local actions = require("telescope.actions")
@@ -517,7 +549,7 @@ map("n", "<Tab>d", function()
 end, { desc = "Telescope diagnostics" })
 
 -- git
-map("n", "<leader>g", ":LazyGit<CR>", { desc = "LazyGit" })
+map("n", "<leader>g", ":WatchTowerToggle<CR>", { desc = "Watch Tower" })
 map("n", "<BS>j", ":GitConflictNextConflict<CR>", { desc = "Git next conflict" })
 map("n", "<BS>k", ":GitConflictPrevConflict<CR>", { desc = "Git previous conflict" })
 map("n", "<BS>o", ":GitConflictChooseOurs<CR>", { desc = "Git choose ours" })
@@ -548,7 +580,14 @@ end
 -- LSP
 map("n", "K", ":lua vim.lsp.buf.hover()<CR>", { desc = "Hover" })
 map("n", "<leader>d", ":lua vim.diagnostic.open_float()<CR>", { desc = "Open diagnostics float" })
-map("n", "gd", ":lua vim.lsp.buf.definition()<CR>", { desc = "Go to definition" })
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(event)
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
+    if client and client:supports_method("textDocument/definition") then
+      map("n", "gd", vim.lsp.buf.definition, { buffer = event.buf, desc = "Go to definition" })
+    end
+  end,
+})
 
 map("n", "<leader>a", ":lua vim.lsp.buf.code_action()<CR>", { desc = "Code action" })
 map("n", "<leader>r", function()

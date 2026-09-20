@@ -48,4 +48,7 @@ echo "Applying macOS preferences..."
 echo "Installing mise-managed tools..."
 mise install
 
+echo "Installing personal apps..."
+"$DOTFILES_DIR/install-personal-apps.sh"
+
 echo "Bootstrap complete."

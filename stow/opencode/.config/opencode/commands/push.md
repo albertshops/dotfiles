@@ -1,35 +1,25 @@
 ---
-description: Clean ignore rules, make logical commits, and push
+description: Review changes, create logical git commits, and push
 agent: build
+model: openai/gpt-5.4-mini
 ---
-You are running a git automation workflow for the current repository.
+Create appropriate git commits for the current repository, then push them to its remote.
 
-Goal:
-1) Ensure files that should be ignored are ignored first.
-2) Create a series of logical commits (not one giant commit).
-3) Push only after commits are complete.
+Workflow:
+- If the current directory is not a git repository, stop and explain.
+- Inspect `git status --short`, `git diff`, `git diff --staged`, `git ls-files --others --exclude-standard`, `git log --oneline -10`, and the current branch and remote tracking configuration before staging anything.
+- Review all pending changes and avoid committing generated files, build output, caches, local environment files, credentials, private keys, tokens, or other likely secrets.
+- Preserve unrelated user changes. Stage only files that belong in each intended commit.
+- Use the smallest sensible number of commits: one for a cohesive change, or separate commits for clearly distinct intents.
+- Match the repository's existing commit-message style. If there is no clear style, use a concise imperative message.
+- Treat `$ARGUMENTS` as optional guidance for commit scope or message, but verify that it accurately describes the changes.
+- Do not run tests, linters, formatters, builds, type checks, or other validation commands. Do not bypass commit hooks that run automatically.
+- If there are appropriate pending changes, commit them before pushing. If there are no pending changes but the branch has unpushed commits, push those commits. If there is nothing to commit or push, make no changes and report that.
+- Push the current branch to its configured upstream. If it has no upstream and the intended remote is unambiguous, set it with `git push -u <remote> HEAD`; otherwise stop and ask which remote to use.
+- Never amend an existing commit, rewrite history, force-push, or bypass hooks.
+- If committing fails, do not push. If pushing fails, preserve the local commits and report the error without attempting destructive recovery.
 
-Rules:
-- If current directory is not a git repository, stop and explain.
-- Run these discovery commands first: `git status --short`, `git diff`, `git diff --staged`, `git ls-files --others --exclude-standard`, `git log --oneline -10`.
-- Identify likely ignore candidates among untracked/changed files (build artifacts, caches, logs, temp files, editor/system files, coverage outputs, local env files).
-- Update `.gitignore` first when needed, then create a dedicated commit for it (for example: `chore: update gitignore`).
-- Never commit likely secret files (`.env`, credentials, private keys, token dumps) unless explicitly requested.
-- After ignore cleanup, choose the smallest sensible number of commits:
-  - If the remaining changes are one cohesive unit, make one commit.
-  - If there are distinct intents/scopes (feature + refactor + docs, etc.), split into coherent commits by intent and scope.
-- Stage only the files for each commit as you go (do not blindly stage everything at once unless that group is intentionally all files).
-- Commit messages should follow existing repository style from recent commits.
-- If the user provided args to this command (`$ARGUMENTS`), treat them as guidance for commit focus/message, not as a reason to collapse into a single commit.
-- After all commits, push safely:
-  - If upstream exists: `git push`
-  - If upstream does not exist: `git push -u origin HEAD`
-- Never use force push.
+Finish by listing each created commit's short hash and message, the remote and branch pushed, the push result, and any files intentionally left uncommitted.
 
-Output requirements:
-- Briefly list ignore changes made.
-- List each commit hash and message created in this run.
-- Report final push result.
-
-User guidance from command args:
+User guidance:
 $ARGUMENTS
