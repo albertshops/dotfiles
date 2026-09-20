@@ -8,5 +8,6 @@
     "npm:pi-mcp-adapter",
     "git:github.com/dmmulroy/pi-web-tools"
   ],
-  "hideThinkingBlock": true
+  "hideThinkingBlock": true,
+  "tuiMode": "fullscreen"
 }
